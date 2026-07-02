@@ -27,7 +27,7 @@ public class CollecteController {
     @Autowired
     private HistoriqueCollecteRepository historiqueCollecteRepository;
 
-
+    
     // Formulaire nouveau achat
     @GetMapping("/nouveau")
     public String formulaireNouveauAchat(Model model) {
