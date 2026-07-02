@@ -1,25 +1,35 @@
 package com.volyVary.modele;
 
 import jakarta.persistence.*;
-import java.util.List;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "client")
 public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_client")
+    @Column(name = "id")
     private int idClient;
 
     @Column(name = "nom")
     private String nom;
 
-    /*Constructeur*/
+    @Column(name = "prenom")
+    private String prenom;
+
+    @Column(name = "reference")
+    private String reference;
+
+    @Column(name = "telephone")
+    private String telephone;
+
+    @Column(name = "date")
+    private LocalDate dateClient;
+    
     public Client(){
     
     }
 
-    /*Setters*/
     public void setIdClient(int idClient) {
         this.idClient = idClient;
     }
@@ -28,7 +38,6 @@ public class Client {
         this.nom = nom;
     }
 
-    /*Getters*/
     public int getIdClient() {
         return idClient;
     }
@@ -37,4 +46,35 @@ public class Client {
         return nom;
     }
 
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public LocalDate getDateClient() {
+        return dateClient;
+    }
+
+    public void setDateClient(LocalDate dateClient) {
+        this.dateClient = dateClient;
+    }
 }
