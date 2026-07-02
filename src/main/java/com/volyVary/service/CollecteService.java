@@ -153,6 +153,10 @@ public class CollecteService {
         return lotPaddyRepository.obtenirRecetteTotal();
     }
 
+    public List<LotPaddy> listerLotsActif(){
+        return lotPaddyRepository.trouverLotsActif();
+    }
+
     public void annulerAchat(int idLot){   
         LotPaddy lot = lotPaddyRepository.trouverParIdLotPaddy(idLot);
         if (lot == null) {
