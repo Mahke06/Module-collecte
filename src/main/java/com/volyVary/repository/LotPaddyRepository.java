@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
-    @Query("SELECT lo FROM LotPaddy lo ORDER BY lo.date DESC")
-    List<LotPaddy> trouverToutDateDec();
 
     @Query("""
         SELECT SUM(lo.quantite) FROM LotPaddy lo
@@ -28,7 +26,6 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     """)
     Double obtenirQuantiteTotal();
 
-    
     @Query("""
         SELECT SUM(lo.prixCollecte) FROM LotPaddy lo
         WHERE EXISTS (
@@ -44,20 +41,14 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     Double obtenirRecetteTotal();
 
     @Query("SELECT lo FROM LotPaddy lo ORDER BY lo.date DESC")
+    List<LotPaddy> trouverToutDateDec();
+
+    @Query("SELECT lo FROM LotPaddy lo WHERE lo.idLotPaddy = :id")
     LotPaddy trouverParIdLotPaddy(@Param("id") int id);
 
-
-    
     @Query("""
-    SELECT DISTINCT lo
     SELECT lo
     FROM LotPaddy lo
-    WHERE (
-        SELECT h2.statut.sigle
-        FROM HistoriqueCollecte h2
-        WHERE h2.lotPaddy.idLotPaddy = lo.idLotPaddy
-        ORDER BY h2.dateHistoriqueCollecte DESC
-    ) <> 'ANNULE'
     WHERE NOT EXISTS (
         SELECT 1
         FROM HistoriqueCollecte h
@@ -72,4 +63,5 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     ORDER BY lo.date DESC
     """)
     List<LotPaddy> trouverLotsActif();
+    
 }
