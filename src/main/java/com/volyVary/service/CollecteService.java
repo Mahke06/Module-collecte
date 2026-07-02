@@ -169,7 +169,10 @@ public class CollecteService {
         }
         
         List<HistoriqueCollecte> historiques = historiqueRepository.trouverDernierHistoriqueParLot(idLot);
-        Client client = historiques.isEmpty() ? null : historiques.get(0).getClient();
+        Client client = null;
+            if(!historiques.isEmpty()) {
+                client = historiques.get(0).getClient();
+            }
 
         HistoriqueCollecte historique = new HistoriqueCollecte();
         historique.setClient(client);
