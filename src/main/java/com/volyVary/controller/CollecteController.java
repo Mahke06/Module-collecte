@@ -113,7 +113,7 @@ public class CollecteController {
 
     @GetMapping("/liste")
     public String listerLots(Model model) {
-        List<LotPaddy> lots = collecteService.listerLots();
+        List<LotPaddy> lots = collecteService.listerLotsActif();
         Double quantiteTotale = collecteService.obtenirQuantiteTotale();
         Double recetteTotale = collecteService.obtenirRecetteTotale();
 
