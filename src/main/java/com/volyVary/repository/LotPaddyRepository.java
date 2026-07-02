@@ -23,4 +23,17 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
 
     @Query("SELECT lo FROM LotPaddy lo WHERE lo.idLotPaddy = :id")
     LotPaddy trouverParIdLotPaddy(@Param("id") int id);
+
+    @Query("""
+    SELECT DISTINCT lo
+    FROM LotPaddy lo
+    WHERE (
+        SELECT h2.statut.sigle
+        FROM HistoriqueCollecte h2
+        WHERE h2.lotPaddy.idLotPaddy = lo.idLotPaddy
+        ORDER BY h2.dateHistoriqueCollecte DESC
+    ) <> 'ANNULE'
+    """)
+    List<LotPaddy> trouverLotsActif();
+    
 }
