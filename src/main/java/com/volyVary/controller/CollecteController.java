@@ -71,20 +71,20 @@ public class CollecteController {
 
 
     // Enregistrer collecte
-    // @PostMapping("/enregistrer")
-    // public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite) {
-    //     LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite);
+    @PostMapping("/enregistrer")
+    public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite) {
+        LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite);
         
-    //     if (lot != null) {
-    //         return "redirect:/collectes/detail/" + lot.getIdLotPaddy();
-    //     }
+        if (lot != null) {
+            return "redirect:/collectes/detail/" + lot.getIdLotPaddy();
+        }
         
-    //     return "redirect:/collectes/nouveau?erreur=Erreur lors de l'enregistrement";
-    // }
+        return "redirect:/collectes/nouveau?erreur=Erreur lors de l'enregistrement";
+    }
 
 
 
-    
+
     // Payer lot existant
     @PostMapping("/payer-lot")
     public String payerLot(@RequestParam int idLot) {
@@ -112,10 +112,19 @@ public class CollecteController {
             return "redirect:/collectes/liste?erreur=Lot non trouvé";
         }
         
-        HistoriqueCollecte historique = historiqueCollecteRepository.trouverDernierHistoriqueParLot(id);
-        Client client = historique != null ? historique.getClient() : null;
-        String statutActuel = historique != null ? historique.getStatut().getSigle() : null;
+        List<HistoriqueCollecte> historique = historiqueCollecteRepository.trouverDernierHistoriqueParLot(id);
+        // Client client = historique != null ? historique.getClient() : null;
+        // String statutActuel = historique != null ? historique.getStatut().getSigle() : null;
         
+        Client client = null;
+        String statutActuel = null;
+        
+        if (!historique.isEmpty()) {
+            HistoriqueCollecte dernierHistorique = historique.get(0);
+            client = dernierHistorique.getClient();
+            statutActuel = dernierHistorique.getStatut().getSigle();
+        }
+
         model.addAttribute("lot", lot);
         model.addAttribute("client", client);
         model.addAttribute("statutActuel", statutActuel);
