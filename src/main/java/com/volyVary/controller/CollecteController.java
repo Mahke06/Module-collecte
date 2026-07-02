@@ -28,18 +28,6 @@ public class CollecteController {
     private HistoriqueCollecteRepository historiqueCollecteRepository;
 
 
-    // Alias pour /collectes → redirige vers /collectes/liste
-    @GetMapping("")
-    public String redirectListe() {
-        return "redirect:/collectes/liste";
-    }
-
-    // Alias pour /collectes/ajouter → redirige vers /collectes/nouveau
-    @GetMapping("/ajouter")
-    public String redirectAjouter() {
-        return "redirect:/collectes/nouveau";
-    }
-
     // Formulaire nouveau achat
     @GetMapping("/nouveau")
     public String formulaireNouveauAchat(Model model) {
