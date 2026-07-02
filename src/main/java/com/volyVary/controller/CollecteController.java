@@ -28,19 +28,6 @@ public class CollecteController {
     private HistoriqueCollecteRepository historiqueCollecteRepository;
 
 
-    // Alias pour /collectes → redirige vers /collectes/liste
-    @GetMapping("")
-    public String redirectListe() {
-        return "redirect:/collectes/liste";
-    }
-
-    // Alias pour /collectes/ajouter → redirige vers /collectes/nouveau
-    @GetMapping("/ajouter")
-    public String redirectAjouter() {
-        return "redirect:/collectes/nouveau";
-    }
-
-    // Formulaire nouveau achat
     @GetMapping("/nouveau")
     public String formulaireNouveauAchat(Model model) {
         model.addAttribute("now", LocalDateTime.now());
@@ -50,8 +37,6 @@ public class CollecteController {
     }
 
 
-
-    // Calculer collecte (validation)
     @PostMapping("/calculer")
     public String calculerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
         Client client = clientRepository.TrouverParIdClient(clientId);
@@ -69,8 +54,6 @@ public class CollecteController {
     }
 
 
-
-    // Enregistrer collecte
     @PostMapping("/enregistrer")
     public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite) {
         LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite);
@@ -84,8 +67,6 @@ public class CollecteController {
 
 
 
-
-    // Payer lot existant
     @PostMapping("/payer-lot")
     public String payerLot(@RequestParam int idLot) {
         collecteService.payerLot(idLot);
@@ -93,8 +74,6 @@ public class CollecteController {
     }
 
 
-
-    // Annuler achat
     @PostMapping("/annuler")
     public String annulerAchat(@RequestParam int idLot) {
         collecteService.annulerAchat(idLot);
@@ -103,7 +82,6 @@ public class CollecteController {
 
 
 
-    // Détail d'un lot
     @GetMapping("/detail/{id}")
     public String detailLot(@PathVariable int id, Model model) {
         LotPaddy lot = collecteService.obtenirLot(id);
@@ -113,8 +91,7 @@ public class CollecteController {
         }
         
         List<HistoriqueCollecte> historique = historiqueCollecteRepository.trouverDernierHistoriqueParLot(id);
-        // Client client = historique != null ? historique.getClient() : null;
-        // String statutActuel = historique != null ? historique.getStatut().getSigle() : null;
+
         
         Client client = null;
         String statutActuel = null;
@@ -134,7 +111,6 @@ public class CollecteController {
 
 
 
-    // Liste des lots
     @GetMapping("/liste")
     public String listerLots(Model model) {
         List<LotPaddy> lots = collecteService.listerLots();
