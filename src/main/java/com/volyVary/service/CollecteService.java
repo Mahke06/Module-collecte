@@ -122,7 +122,11 @@ public class CollecteService {
             return;
         }
 
+        List<HistoriqueCollecte> historiques = historiqueRepository.trouverDernierHistoriqueParLot(idLot);
+        Client client = historiques.isEmpty() ? null : historiques.get(0).getClient();
+
         HistoriqueCollecte historique = new HistoriqueCollecte();
+        historique.setClient(client);
         historique.setLotPaddy(lot);
         historique.setStatut(statutPaye);
         historique.setDateHistoriqueCollecte(LocalDate.now());
@@ -159,8 +163,12 @@ public class CollecteService {
         if (statutAnnule == null) {
             return;
         }
+        
+        List<HistoriqueCollecte> historiques = historiqueRepository.trouverDernierHistoriqueParLot(idLot);
+        Client client = historiques.isEmpty() ? null : historiques.get(0).getClient();
 
         HistoriqueCollecte historique = new HistoriqueCollecte();
+        historique.setClient(client);
         historique.setLotPaddy(lot);
         historique.setStatut(statutAnnule);
         historique.setDateHistoriqueCollecte(LocalDate.now());
