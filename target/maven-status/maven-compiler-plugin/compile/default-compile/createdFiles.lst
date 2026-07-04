@@ -9,7 +9,6 @@ com/volyVary/repository/ClientRepository.class
 com/volyVary/modele/Distribution.class
 com/volyVary/controller/DemandeController.class
 com/volyVary/repository/ReductionRepository.class
-com/volyVary/modele/TypeTransaction.class
 com/volyVary/modele/CategorieFourniture.class
 com/volyVary/modele/DetailLotTransforme.class
 com/volyVary/controller/CollecteController.class

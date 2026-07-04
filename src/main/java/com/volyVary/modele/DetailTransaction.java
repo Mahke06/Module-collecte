@@ -3,7 +3,7 @@ package com.volyVary.modele;
 import jakarta.persistence.*;
 import java.util.List;
 
-@Entity
+//@Entity
 @Table(name = "detail_transaction")
 public class DetailTransaction {
     

@@ -5,11 +5,13 @@ import com.volyVary.modele.HistoriqueCollecte;
 import com.volyVary.modele.LotPaddy;
 import com.volyVary.repository.ClientRepository;
 import com.volyVary.repository.HistoriqueCollecteRepository;
+import com.volyVary.service.ClientService;
 import com.volyVary.service.CollecteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import com.volyVary.repository.ClientRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +27,15 @@ public class CollecteController {
     private ClientRepository clientRepository;
 
     @Autowired
+    private final ClientService clientService;
+
+    @Autowired
     private HistoriqueCollecteRepository historiqueCollecteRepository;
+
+
+    CollecteController(ClientService clientService) {
+        this.clientService = clientService;
+    }
 
 
     @GetMapping("/nouveau")
@@ -38,13 +48,14 @@ public class CollecteController {
 
 
     @PostMapping("/calculer")
-    public String calculerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
-        Client client = clientRepository.TrouverParIdClient(clientId);
-        if (client == null) {
-            return "redirect:/collectes/nouveau?erreur=Client non trouvé";
-        }
+    public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
+        Client client = clientService.trouverOuCreerClient(nom, prenom, telephone);
+        
+        //if (client == null) {
+            //return "redirect:/collectes/nouveau?erreur=Client non trouvé";
+        //}
 
-        LotPaddy lot = collecteService.calculerCollecte(clientId, quantite, prixUnitaire, tauxHumidite);
+        LotPaddy lot = collecteService.calculerCollecte(client.getIdClient(), quantite, prixUnitaire, tauxHumidite);
 
         model.addAttribute("lot", lot);
         model.addAttribute("client", client);
