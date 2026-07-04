@@ -24,35 +24,20 @@
             </div>
 
             <div>
-                <label for="client-select">Client :</label>
-                <select id="client-select" name="clientId" onchange="remplirClient()" required>
-                    <option value="">-- Sélectionner un client --</option>
-                    <c:forEach var="c" items="${clients}">
-                        <option value="${c.idClient}" 
-                                data-nom="${c.nom}" 
-                                data-prenom="${c.prenom}" 
-                                data-telephone="${c.telephone}">
-                            ${c.reference} - ${c.nom} ${c.prenom}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
-
-            <fieldset>
-                <legend>Informations Client</legend>
+                <label for="client-info">Client :</label>
                 <div>
-                    <label for="nom">Nom :</label>
-                    <input type="text" id="nom" name="nom" readonly>
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom" required>
                 </div>
                 <div>
                     <label for="prenom">Prénom :</label>
-                    <input type="text" id="prenom" name="prenom" readonly>
+                    <input type="text" id="prenom" name="prenom" required>
                 </div>
                 <div>
-                    <label for="telephone">Numéro de téléphone :</label>
-                    <input type="tel" id="telephone" name="telephone" readonly>
+                    <label for="telephone">Téléphone :</label>
+                    <input type="text" id="telephone" name="telephone" required>
                 </div>
-            </fieldset>
+            </div>
 
             <div>
                 <label for="quantite">Quantité de Paddy (kg) :</label>
