@@ -199,25 +199,25 @@ public class CollecteService {
 
 
     private void validerDonneesCollecte(Double quantite, Double prixUnitaire, Double tauxHumidite) {
-    if (quantite == null) {
-        throw new IllegalArgumentException("La quantité est obligatoire");
-    }
-    if (quantite <= 0) {
-        throw new IllegalArgumentException("La quantité doit être positive  : " + quantite + " kg");
-    }
+        if (quantite == null) {
+            throw new IllegalArgumentException("La quantité est obligatoire");
+        }
+        if (quantite <= 0) {
+            throw new IllegalArgumentException("La quantité doit être positive  : " + quantite + " kg");
+        }
 
-    if (prixUnitaire == null) {
-        throw new IllegalArgumentException("Le prix unitaire est obligatoire");
-    }
-    if (prixUnitaire <= 0) {
-        throw new IllegalArgumentException("Le prix unitaire doit être positif  : " + prixUnitaire + " Ar");
-    }
+        if (prixUnitaire == null) {
+            throw new IllegalArgumentException("Le prix unitaire est obligatoire");
+        }
+        if (prixUnitaire <= 0) {
+            throw new IllegalArgumentException("Le prix unitaire doit être positif  : " + prixUnitaire + " Ar");
+        }
 
-    if (tauxHumidite == null) {
-        throw new IllegalArgumentException("Le taux d'humidité est obligatoire");
+        if (tauxHumidite == null) {
+            throw new IllegalArgumentException("Le taux d'humidité est obligatoire");
+        }
+        if (tauxHumidite < 0 || tauxHumidite > 100) {
+            throw new IllegalArgumentException("Le taux d'humidité doit être entre 0 et 100%  : " + tauxHumidite + "%");
+        }
     }
-    if (tauxHumidite < 0 || tauxHumidite > 100) {
-        throw new IllegalArgumentException("Le taux d'humidité doit être entre 0 et 100%  : " + tauxHumidite + "%");
-    }
-}
 }

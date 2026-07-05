@@ -7,14 +7,20 @@ import com.volyVary.repository.ClientRepository;
 import com.volyVary.repository.HistoriqueCollecteRepository;
 import com.volyVary.service.ClientService;
 import com.volyVary.service.CollecteService;
+import com.volyVary.service.ImportService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import java.util.Map;
 
 
 @Controller
@@ -201,7 +207,7 @@ public class CollecteController {
     }
 
 
-    
+
     @GetMapping("/valides")
     public String lotsValides(Model model) {
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
@@ -224,4 +230,20 @@ public class CollecteController {
         return "collecte/liste-valides";
     }
 
+
+
+    @Autowired
+    private ImportService importService;
+
+    @PostMapping("/lire-excel")
+    @ResponseBody
+    public Map<String, Object> lireExcel(@RequestParam("fichier") MultipartFile fichier) {
+        try {
+            return importService.lireExcel(fichier);
+        } catch (IllegalArgumentException e) {
+            Map<String, Object> erreur = new HashMap<>();
+            erreur.put("erreur", e.getMessage());
+            return erreur;
+        }
+    }
 }
