@@ -32,9 +32,11 @@ public class CollecteService {
     @Autowired
     private HistoriqueCollecteRepository historiqueRepository;
 
+    
 
     public LotPaddy calculerCollecte(int clientId, Double quantite, Double prixUnitaire, Double tauxHumidite, String dateHeure) {
-        
+        validerDonneesCollecte(quantite, prixUnitaire, tauxHumidite);
+
        Client client = clientRepository.TrouverParIdClient(clientId);
         if (client == null) {
             return null;
@@ -57,7 +59,7 @@ public class CollecteService {
         LotPaddy lot = new LotPaddy();
         lot.setQuantite(quantite);
         lot.setTauxHumidite(tauxHumidite);
-        lot.setDate(LocalDateTime.parse(dateHeure).toLocalDate());
+        lot.setDate(parseDate(dateHeure));
         lot.setPrixCollecte(prixTotal);
         lot.setCollecte(collecte);
 
@@ -104,7 +106,7 @@ public class CollecteService {
         historique.setClient(client);
         historique.setLotPaddy(lot);
         historique.setStatut(statut);
-        historique.setDateHistoriqueCollecte(LocalDateTime.parse(dateHeure).toLocalDate());
+        historique.setDateHistoriqueCollecte(parseDate(dateHeure));
         historiqueRepository.save(historique);
 
         return lot;
@@ -185,4 +187,37 @@ public class CollecteService {
         historique.setDateHistoriqueCollecte(LocalDate.now());
         historiqueRepository.save(historique);
     }
+
+
+    private LocalDate parseDate(String dateHeure) {
+        try {
+            return LocalDateTime.parse(dateHeure).toLocalDate();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Format de date invalide");
+        }
+    }
+
+
+    private void validerDonneesCollecte(Double quantite, Double prixUnitaire, Double tauxHumidite) {
+    if (quantite == null) {
+        throw new IllegalArgumentException("La quantité est obligatoire");
+    }
+    if (quantite <= 0) {
+        throw new IllegalArgumentException("La quantité doit être positive  : " + quantite + " kg");
+    }
+
+    if (prixUnitaire == null) {
+        throw new IllegalArgumentException("Le prix unitaire est obligatoire");
+    }
+    if (prixUnitaire <= 0) {
+        throw new IllegalArgumentException("Le prix unitaire doit être positif  : " + prixUnitaire + " Ar");
+    }
+
+    if (tauxHumidite == null) {
+        throw new IllegalArgumentException("Le taux d'humidité est obligatoire");
+    }
+    if (tauxHumidite < 0 || tauxHumidite > 100) {
+        throw new IllegalArgumentException("Le taux d'humidité doit être entre 0 et 100%  : " + tauxHumidite + "%");
+    }
+}
 }
