@@ -57,19 +57,18 @@
             <br>
             <button type="submit">Calculer et valider</button>
         </form>
+
+        <div>
+            <label for="fichier-excel">Importer depuis Excel :</label>
+            <input type="file" id="fichier-excel" accept=".xlsx">
+            <button type="button" onclick="importerExcel()">Remplir depuis Excel</button>
+        </div>
+        <div id="message-import" style="margin-top: 10px;"></div>
+        
     </section>
 
     <script>
-        function remplirClient() {
-            const select = document.getElementById('client-select');
-            const option = select.options[select.selectedIndex];
-            
-            document.getElementById('nom').value = option.getAttribute('data-nom') || '';
-            document.getElementById('prenom').value = option.getAttribute('data-prenom') || '';
-            document.getElementById('telephone').value = option.getAttribute('data-telephone') || '';
-        }
-
-        // Remplir la date/heure actuelle
+        // Auto-remplir date actuelle
         window.addEventListener('load', function() {
             const now = new Date();
             const year = now.getFullYear();
@@ -77,9 +76,53 @@
             const day = String(now.getDate()).padStart(2, '0');
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
-            
             document.getElementById('date-heure').value = `${year}-${month}-${day}T${hours}:${minutes}`;
         });
+
+        function importerExcel() {
+            const fichier = document.getElementById('fichier-excel').files[0];
+            const messageDiv = document.getElementById('message-import');
+
+            if (!fichier) {
+                messageDiv.innerHTML = '<p style="color: red;">Veuillez choisir un fichier Excel</p>';
+                return;
+            }
+
+            if (!fichier.name.endsWith('.xlsx')) {
+                messageDiv.innerHTML = '<p style="color: red;">Le fichier doit être au format .xlsx</p>';
+                return;
+            }
+
+            // Créer FormData pour envoyer le fichier
+            const formData = new FormData();
+            formData.append('fichier', fichier);
+
+            messageDiv.innerHTML = '<p style="color: blue;">Lecture du fichier en cours...</p>';
+
+            // Envoyer au serveur via Ajax
+            fetch('${pageContext.request.contextPath}/collectes/lire-excel', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.erreur) {
+                    messageDiv.innerHTML = '<p style="color: red;">' + data.erreur + '</p>';
+                } else {
+                    document.getElementById('nom').value = data.nom;
+                    document.getElementById('prenom').value = data.prenom;
+                    document.getElementById('telephone').value = data.telephone;
+                    document.getElementById('quantite').value = data.quantite;
+                    document.getElementById('humidite').value = data.tauxHumidite;
+                    document.getElementById('prix-unitaire').value = data.prixUnitaire;
+
+                    messageDiv.innerHTML = '<p style="color: green;">✓ Fichier lu avec succès !</p>';
+                }
+            })
+            .catch(error => {
+                messageDiv.innerHTML = '<p style="color: red;">Erreur réseau : ' + error.message + '</p>';
+            });
+        }
     </script>
 </body>
 </html>
