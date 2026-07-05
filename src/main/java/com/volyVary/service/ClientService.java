@@ -32,14 +32,18 @@ public class ClientService {
             return "C001";
         }
         int numero = Integer.parseInt(prefix);
-        return String.format("C00%d", numero + 1);
+        return String.format("C%03d", numero + 1);
     }
 
 
     public Client trouverOuCreerClient(String nom, String prenom, String telephone, String dateHeure){
+        validerTelephone(telephone);
         Client clientExistant = clientRepository.TrouverParTelephone(telephone);
         if (clientExistant != null) {
-            return clientExistant;        
+            if (!clientExistant.getNom().equalsIgnoreCase(nom) || !clientExistant.getPrenom().equalsIgnoreCase(prenom)) {
+                throw new IllegalArgumentException("Numero existant");
+            }
+            return clientExistant;       
         }
 
         Client nouveauClient = new Client();
@@ -48,7 +52,17 @@ public class ClientService {
         nouveauClient.setTelephone(telephone);
         nouveauClient.setDateClient(LocalDateTime.parse(dateHeure).toLocalDate());
         nouveauClient.setReference(genererNouvelleReference());
-        return clientRepository.save(nouveauClient);
-        
+        return clientRepository.save(nouveauClient); 
+    }
+
+
+
+    private void validerTelephone(String telephone) {
+        if (telephone == null || telephone.isBlank()) {
+            throw new IllegalArgumentException("Le numéro de téléphone est obligatoire");
+        }
+        if (!telephone.matches("^[0-9 ]+$")) {
+            throw new IllegalArgumentException("Le numéro de téléphone ne doit contenir que des chiffres : " + telephone);
+        }
     }
 }

@@ -35,7 +35,7 @@
                 </div>
                 <div>
                     <label for="telephone">Téléphone :</label>
-                    <input type="text" id="telephone" name="telephone" required>
+                    <input type="number" id="telephone" name="telephone" required>
                 </div>
             </div>
 

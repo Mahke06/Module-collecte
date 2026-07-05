@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import com.volyVary.repository.ClientRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,11 +49,12 @@ public class CollecteController {
 
     @PostMapping("/calculer")
     public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
+        try { 
         Client client = clientService.trouverOuCreerClient(nom, prenom, telephone, dateHeure);
         
-        //if (client == null) {
-            //return "redirect:/collectes/nouveau?erreur=Client non trouvé";
-        //}
+        if (client == null) {
+            return "redirect:/collectes/nouveau?erreur=Client non trouvé";
+        }
 
         LotPaddy lot = collecteService.calculerCollecte(client.getIdClient(), quantite, prixUnitaire, tauxHumidite, dateHeure);
 
@@ -64,11 +64,17 @@ public class CollecteController {
         model.addAttribute("prixUnitaireOriginal", prixUnitaire);
         
         return "collecte/validation-collecte";
+
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("erreur", e.getMessage());
+            return "collecte/formulaire-collecte";
+        }
     }
 
 
     @PostMapping("/enregistrer")
-    public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, @RequestParam String dateHeure) {
+    public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, @RequestParam String dateHeure, Model model) {
+        try { 
         LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite, dateHeure);
         
         if (lot != null) {
@@ -76,7 +82,13 @@ public class CollecteController {
         }
         
         return "redirect:/collectes/nouveau?erreur=Erreur lors de l'enregistrement";
+        }
+        catch (IllegalArgumentException e) {
+            model.addAttribute("erreur", e.getMessage());
+            return "collecte/formulaire-collecte";
+        }
     }
+
 
 
 
@@ -137,6 +149,7 @@ public class CollecteController {
         return "collecte/liste-lots";
     }
 
+
     @GetMapping("/imprimer/{id}")
     public String imprimer(@PathVariable int id, Model model) {
         LotPaddy lot = collecteService.obtenirLot(id);
@@ -146,8 +159,14 @@ public class CollecteController {
         }
 
         List<HistoriqueCollecte> historique = historiqueCollecteRepository.trouverDernierHistoriqueParLot(id);
-        HistoriqueCollecte historiques = !historique.isEmpty() ? historique.get(0) : null ;
-        Client client = historiques !=null ? historiques.getClient() : null;
+        HistoriqueCollecte historiques = null;
+        if (!historique.isEmpty()) {
+            historiques = historique.get(0);
+        }
+        Client client = null;
+        if(historiques != null) {
+            client = historiques.getClient();
+        }
 
         model.addAttribute("lot", lot);
         model.addAttribute("client", client);

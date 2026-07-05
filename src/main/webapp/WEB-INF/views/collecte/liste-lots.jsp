@@ -34,6 +34,7 @@
                     <th>Quantité (kg)</th>
                     <th>Prix unitaire (Ar)</th>
                     <th>Total (Ar)</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
