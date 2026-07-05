@@ -3,7 +3,8 @@ package com.volyVary.service;
 import com.volyVary.repository.*;
 import com.volyVary.modele.*;
 
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class ClientService {
     }
 
 
-    public Client trouverOuCreerClient(String nom, String prenom, String telephone){
+    public Client trouverOuCreerClient(String nom, String prenom, String telephone, String dateHeure){
         Client clientExistant = clientRepository.TrouverParTelephone(telephone);
         if (clientExistant != null) {
             return clientExistant;        
@@ -45,7 +46,7 @@ public class ClientService {
         nouveauClient.setNom(nom);
         nouveauClient.setPrenom(prenom);
         nouveauClient.setTelephone(telephone);
-        nouveauClient.setDateClient(LocalDate.now());
+        nouveauClient.setDateClient(LocalDateTime.parse(dateHeure).toLocalDate());
         nouveauClient.setReference(genererNouvelleReference());
         return clientRepository.save(nouveauClient);
         

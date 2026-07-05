@@ -20,7 +20,7 @@
         <form action="${pageContext.request.contextPath}/collectes/calculer" method="post">
             <div>
                 <label for="date-heure">Date et heure :</label>
-                <input type="datetime-local" id="date-heure" name="dateHeure">
+                <input type="datetime-local" id="date-heure" name="dateHeure" required>
             </div>
 
             <div>

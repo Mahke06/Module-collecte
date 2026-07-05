@@ -15,8 +15,8 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     @Query("""
         SELECT SUM(lo.quantite) FROM LotPaddy lo
         JOIN HistoriqueCollecte h ON h.lotPaddy = lo
-        WHERE h.dateHistoriqueCollecte = (
-            SELECT MAX(h2.dateHistoriqueCollecte)
+        WHERE h.idHistoriqueCollecte = (
+            SELECT MAX(h2.idHistoriqueCollecte)
             FROM HistoriqueCollecte h2
             WHERE h2.lotPaddy = lo
         )
@@ -29,8 +29,8 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     @Query("""
         SELECT SUM(lo.prixCollecte) FROM LotPaddy lo
         JOIN HistoriqueCollecte h ON h.lotPaddy = lo
-        WHERE h.dateHistoriqueCollecte = (
-            SELECT MAX(h2.dateHistoriqueCollecte)
+        WHERE h.idHistoriqueCollecte = (
+            SELECT MAX(h2.idHistoriqueCollecte)
             FROM HistoriqueCollecte h2
             WHERE h2.lotPaddy = lo
         )
@@ -51,8 +51,8 @@ public interface LotPaddyRepository extends JpaRepository<LotPaddy, Integer> {
     @Query("""
         SELECT lo FROM LotPaddy lo
         JOIN HistoriqueCollecte h ON h.lotPaddy = lo
-        WHERE h.dateHistoriqueCollecte = (
-            SELECT MAX(h2.dateHistoriqueCollecte)
+        WHERE h.idHistoriqueCollecte = (
+            SELECT MAX(h2.idHistoriqueCollecte)
             FROM HistoriqueCollecte h2
             WHERE h2.lotPaddy = lo
         )

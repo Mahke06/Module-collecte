@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -32,7 +33,7 @@ public class CollecteService {
     private HistoriqueCollecteRepository historiqueRepository;
 
 
-    public LotPaddy calculerCollecte(int clientId, Double quantite, Double prixUnitaire, Double tauxHumidite) {
+    public LotPaddy calculerCollecte(int clientId, Double quantite, Double prixUnitaire, Double tauxHumidite, String dateHeure) {
         
        Client client = clientRepository.TrouverParIdClient(clientId);
         if (client == null) {
@@ -56,7 +57,7 @@ public class CollecteService {
         LotPaddy lot = new LotPaddy();
         lot.setQuantite(quantite);
         lot.setTauxHumidite(tauxHumidite);
-        lot.setDate(LocalDate.now());
+        lot.setDate(LocalDateTime.parse(dateHeure).toLocalDate());
         lot.setPrixCollecte(prixTotal);
         lot.setCollecte(collecte);
 
@@ -66,7 +67,7 @@ public class CollecteService {
 
 
     @Transactional
-    public LotPaddy enregistrerCollecte(int clientId, Double quantite, Double prixUnitaire, Double tauxHumidite) {
+    public LotPaddy enregistrerCollecte(int clientId, Double quantite, Double prixUnitaire, Double tauxHumidite, String dateHeure) {
         Client client = clientRepository.TrouverParIdClient(clientId);
         if (client == null) {
             return null;
@@ -89,7 +90,7 @@ public class CollecteService {
         lot.setReference("LP" + System.currentTimeMillis());
         lot.setQuantite(quantite);
         lot.setTauxHumidite(tauxHumidite);
-        lot.setDate(LocalDate.now());
+        lot.setDate(LocalDateTime.parse(dateHeure).toLocalDate());
         lot.setPrixCollecte(prixTotal);
         lot.setCollecte(collecte);
         lot = lotPaddyRepository.save(lot);
@@ -103,7 +104,7 @@ public class CollecteService {
         historique.setClient(client);
         historique.setLotPaddy(lot);
         historique.setStatut(statut);
-        historique.setDateHistoriqueCollecte(LocalDate.now());
+        historique.setDateHistoriqueCollecte(LocalDateTime.parse(dateHeure).toLocalDate());
         historiqueRepository.save(historique);
 
         return lot;
@@ -117,13 +118,16 @@ public class CollecteService {
             return;
         }
 
-        StatutLotPaddy statutPaye = statutRepository.trouverParSigle("PAYE");
+        StatutLotPaddy statutPaye = statutRepository.trouverParSigle("VALIDE");
         if (statutPaye == null) {
             return;
         }
 
         List<HistoriqueCollecte> historiques = historiqueRepository.trouverDernierHistoriqueParLot(idLot);
-        Client client = historiques.isEmpty() ? null : historiques.get(0).getClient();
+        Client client = null;
+        if (!historiques.isEmpty()) {
+            client = historiques.get(0).getClient();
+        }
 
         HistoriqueCollecte historique = new HistoriqueCollecte();
         historique.setClient(client);
@@ -170,7 +174,7 @@ public class CollecteService {
         
         List<HistoriqueCollecte> historiques = historiqueRepository.trouverDernierHistoriqueParLot(idLot);
         Client client = null;
-        if(historiques.isEmpty()){
+        if(!historiques.isEmpty()){
             client = historiques.get(0).getClient();
         } 
 

@@ -33,6 +33,7 @@
 
         <c:if test="${lot.idLotPaddy == 0}">
             <form action="${pageContext.request.contextPath}/collectes/enregistrer" method="post" style="display:inline;">
+                <input type="hidden" name="dateHeure" value="${dateHeure    }">
                 <input type="hidden" name="clientId" value="${client.idClient}">
                 <input type="hidden" name="quantite" value="${lot.quantite}">
                 <input type="hidden" name="prixUnitaire" value="${prixUnitaireOriginal}">
@@ -44,23 +45,27 @@
         </c:if>
 
         <c:if test="${lot.idLotPaddy != 0}">
-            <c:if test="${statutActuel != 'PAYE'}">
+            <c:if test="${statutActuel != 'VALIDE'}">
                 <form action="${pageContext.request.contextPath}/collectes/payer-lot" method="post" style="display:inline;">
                     <input type="hidden" name="idLot" value="${lot.idLotPaddy}">
                     <button type="submit">Payer</button>
                 </form>
+                
+                <form action="${pageContext.request.contextPath}/collectes/annuler" method="post" style="display:inline;">
+                    <input type="hidden" name="idLot" value="${lot.idLotPaddy}">
+                    <button type="submit" onclick="return confirm('Voulez-vous vraiment annuler cet achat ?')">
+                        Annuler l'achat
+                    </button>
+                </form>
             </c:if>
 
-            <c:if test="${statutActuel == 'PAYE'}">
+            <c:if test="${statutActuel == 'VALIDE'}">
                 <p style="color: green;"><strong>✓ Lot déjà payé</strong></p>
             </c:if>
 
-            <form action="${pageContext.request.contextPath}/collectes/annuler" method="post" style="display:inline;">
-                <input type="hidden" name="idLot" value="${lot.idLotPaddy}">
-                <button type="submit" onclick="return confirm('Voulez-vous vraiment annuler cet achat ?')">
-                    Annuler l'achat
-                </button>
-            </form>
+            <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/collectes/imprimer/${lot.idLotPaddy}'">
+                Imprimer la facture
+            </button>
 
             <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/collectes/liste'">
                 Retour à la liste
