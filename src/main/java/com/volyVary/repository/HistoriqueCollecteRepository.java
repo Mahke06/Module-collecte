@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface HistoriqueCollecteRepository extends JpaRepository<HistoriqueCollecte, Integer> {
-    @Query("SELECT h FROM HistoriqueCollecte h WHERE h.lotPaddy.idLotPaddy = :idLot ORDER BY h.dateHistoriqueCollecte  DESC")
+    @Query("SELECT h FROM HistoriqueCollecte h WHERE h.lotPaddy.idLotPaddy = :idLot ORDER BY h.idHistoriqueCollecte  DESC")
     List<HistoriqueCollecte> trouverDernierHistoriqueParLot(@Param("idLot") int idLot);  
 }

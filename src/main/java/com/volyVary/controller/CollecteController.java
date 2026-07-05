@@ -16,6 +16,7 @@ import com.volyVary.repository.ClientRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Controller
 @RequestMapping("/collectes")
 public class CollecteController {
@@ -48,15 +49,16 @@ public class CollecteController {
 
 
     @PostMapping("/calculer")
-    public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
-        Client client = clientService.trouverOuCreerClient(nom, prenom, telephone);
+    public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
+        Client client = clientService.trouverOuCreerClient(nom, prenom, telephone, dateHeure);
         
         //if (client == null) {
             //return "redirect:/collectes/nouveau?erreur=Client non trouvé";
         //}
 
-        LotPaddy lot = collecteService.calculerCollecte(client.getIdClient(), quantite, prixUnitaire, tauxHumidite);
+        LotPaddy lot = collecteService.calculerCollecte(client.getIdClient(), quantite, prixUnitaire, tauxHumidite, dateHeure);
 
+        model.addAttribute("dateHeure", dateHeure);
         model.addAttribute("lot", lot);
         model.addAttribute("client", client);
         model.addAttribute("prixUnitaireOriginal", prixUnitaire);
@@ -66,8 +68,8 @@ public class CollecteController {
 
 
     @PostMapping("/enregistrer")
-    public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite) {
-        LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite);
+    public String enregistrerCollecte(@RequestParam int clientId, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, @RequestParam String dateHeure) {
+        LotPaddy lot = collecteService.enregistrerCollecte(clientId, quantite, prixUnitaire, tauxHumidite, dateHeure);
         
         if (lot != null) {
             return "redirect:/collectes/detail/" + lot.getIdLotPaddy();
@@ -134,4 +136,23 @@ public class CollecteController {
 
         return "collecte/liste-lots";
     }
+
+    @GetMapping("/imprimer/{id}")
+    public String imprimer(@PathVariable int id, Model model) {
+        LotPaddy lot = collecteService.obtenirLot(id);
+
+        if (lot == null) {
+            return "redirect:/collectes/liste?erreur=Lot non trouvé";
+        }
+
+        List<HistoriqueCollecte> historique = historiqueCollecteRepository.trouverDernierHistoriqueParLot(id);
+        HistoriqueCollecte historiques = !historique.isEmpty() ? historique.get(0) : null ;
+        Client client = historiques !=null ? historiques.getClient() : null;
+
+        model.addAttribute("lot", lot);
+        model.addAttribute("client", client);
+
+        return "collecte/imprimer";
+    }
+    
 }
