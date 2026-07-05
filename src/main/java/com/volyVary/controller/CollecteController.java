@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -174,4 +175,53 @@ public class CollecteController {
         return "collecte/imprimer";
     }
     
+
+
+
+    @GetMapping("/en-attente")
+    public String lotsEnAttente(Model model) {
+        List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
+        List<LotPaddy> lotsEnAttente = new ArrayList<>();
+
+        for (LotPaddy lot : tousLesLots) {
+            List<HistoriqueCollecte> historiques = historiqueCollecteRepository.trouverDernierHistoriqueParLot(lot.getIdLotPaddy());
+            if (!historiques.isEmpty() && "EN_ATTENTE".equals(historiques.get(0).getStatut().getSigle())) {
+                lotsEnAttente.add(lot);
+            }
+        }
+
+        Double quantiteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getQuantite).sum();
+        Double recetteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
+
+        model.addAttribute("lots", lotsEnAttente);
+        model.addAttribute("quantiteTotale", quantiteTotale);
+        model.addAttribute("recetteTotale", recetteTotale);
+
+        return "collecte/liste-en-attente";
+    }
+
+
+    
+    @GetMapping("/valides")
+    public String lotsValides(Model model) {
+        List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
+        List<LotPaddy> lotsValides = new ArrayList<>();
+
+        for (LotPaddy lot : tousLesLots) {
+            List<HistoriqueCollecte> historiques = historiqueCollecteRepository.trouverDernierHistoriqueParLot(lot.getIdLotPaddy());
+            if (!historiques.isEmpty() && "VALIDE".equals(historiques.get(0).getStatut().getSigle())) {
+                lotsValides.add(lot);
+            }
+        }
+
+        Double quantiteTotale = lotsValides.stream().mapToDouble(LotPaddy::getQuantite).sum();
+        Double recetteTotale = lotsValides.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
+
+        model.addAttribute("lots", lotsValides);
+        model.addAttribute("quantiteTotale", quantiteTotale);
+        model.addAttribute("recetteTotale", recetteTotale);
+
+        return "collecte/liste-valides";
+    }
+
 }
