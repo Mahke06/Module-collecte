@@ -5,23 +5,25 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Liste des Lots de Paddy</title>
+    <title>Lots validés</title>
 </head>
 <body>
     <section>
-        <h2>Collecte: liste des lots de paddy</h2>
+        <h2>Collecte: Lots validés et payés</h2>
 
         <div>
-            <div>
-                <p><strong>Quantité totale collectée:</strong> 
-                    <fmt:formatNumber value="${quantiteTotale}" pattern="#,##0.##"/> kg
-                </p>
-            </div>
-            <div>
-                <p><strong>Recette totale obtenue:</strong> 
-                    <fmt:formatNumber value="${recetteTotale}" pattern="#,##0"/> Ar
-                </p>
-            </div>
+            <a href="${pageContext.request.contextPath}/collectes/en-attente">→ Voir les lots en attente</a>
+        </div>
+
+        <br>
+
+        <div>
+            <p><strong>Quantité totale :</strong>
+                <fmt:formatNumber value="${quantiteTotale}" pattern="#,##0.##"/> kg
+            </p>
+            <p><strong>Recette totale :</strong>
+                <fmt:formatNumber value="${recetteTotale}" pattern="#,##0"/> Ar
+            </p>
         </div>
 
         <br>
@@ -55,7 +57,7 @@
 
                 <c:if test="${empty lots}">
                     <tr>
-                        <td colspan="6" style="text-align: center;">Aucun lot enregistré</td>
+                        <td colspan="6" style="text-align: center;">Aucun lot validé</td>
                     </tr>
                 </c:if>
             </tbody>
