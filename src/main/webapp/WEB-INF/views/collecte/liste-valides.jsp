@@ -15,6 +15,53 @@
             <a href="${pageContext.request.contextPath}/collectes/en-attente">→ Voir les lots en attente</a>
         </div>
 
+
+        <form action="${pageContext.request.contextPath}/collectes/valides" method="get">
+            <table>
+                <tr>
+                    <td><label>Référence :</label></td>
+                    <td><input type="text" name="reference" value="${reference}" placeholder="Ex: LP001"></td>
+                </tr>
+                <tr>
+                    <td><label>Date :</label></td>
+                    <td>
+                        Min : <input type="date" name="dateMin" value="${dateMin}">
+                        Max : <input type="date" name="dateMax" value="${dateMax}">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Quantité (kg) :</label></td>
+                    <td>
+                        Min : <input type="number" name="quantiteMin" value="${quantiteMin}" step="0.01" placeholder="0">
+                        Max : <input type="number" name="quantiteMax" value="${quantiteMax}" step="0.01" placeholder="99999">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Prix unitaire (Ar) :</label></td>
+                    <td>
+                        Min : <input type="number" name="prixMin" value="${prixMin}" step="0.01" placeholder="0">
+                        Max : <input type="number" name="prixMax" value="${prixMax}" step="0.01" placeholder="99999">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label>Total (Ar) :</label></td>
+                    <td>
+                        Min : <input type="number" name="totalMin" value="${totalMin}" step="0.01" placeholder="0">
+                        Max : <input type="number" name="totalMax" value="${totalMax}" step="0.01" placeholder="99999999">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button type="submit">Rechercher</button>
+                        <a href="${pageContext.request.contextPath}/collectes/liste">Réinitialiser</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+
+
+
+
         <br>
 
         <div>

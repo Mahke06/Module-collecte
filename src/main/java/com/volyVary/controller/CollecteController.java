@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -144,14 +145,27 @@ public class CollecteController {
 
 
     @GetMapping("/liste")
-    public String listerLots(Model model) {
+    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
         List<LotPaddy> lots = collecteService.listerLotsActif();
+
+        lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+
         Double quantiteTotale = collecteService.obtenirQuantiteTotale();
         Double recetteTotale = collecteService.obtenirRecetteTotale();
 
         model.addAttribute("lots", lots);
         model.addAttribute("quantiteTotale", quantiteTotale != null ? quantiteTotale : 0);
         model.addAttribute("recetteTotale", recetteTotale != null ? recetteTotale : 0);
+
+        model.addAttribute("reference", reference);
+        model.addAttribute("dateMin", dateMin);
+        model.addAttribute("dateMax", dateMax);
+        model.addAttribute("quantiteMin", quantiteMin);
+        model.addAttribute("quantiteMax", quantiteMax);
+        model.addAttribute("prixMin", prixMin);
+        model.addAttribute("prixMax", prixMax);
+        model.addAttribute("totalMin", totalMin);
+        model.addAttribute("totalMax", totalMax);
 
         return "collecte/liste-lots";
     }
@@ -185,7 +199,7 @@ public class CollecteController {
 
 
     @GetMapping("/en-attente")
-    public String lotsEnAttente(Model model) {
+    public String lotsEnAttente(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsEnAttente = new ArrayList<>();
 
@@ -195,6 +209,9 @@ public class CollecteController {
                 lotsEnAttente.add(lot);
             }
         }
+        
+        lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+
 
         Double quantiteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
@@ -203,13 +220,23 @@ public class CollecteController {
         model.addAttribute("quantiteTotale", quantiteTotale);
         model.addAttribute("recetteTotale", recetteTotale);
 
+        model.addAttribute("reference", reference);
+        model.addAttribute("dateMin", dateMin);
+        model.addAttribute("dateMax", dateMax);
+        model.addAttribute("quantiteMin", quantiteMin);
+        model.addAttribute("quantiteMax", quantiteMax);
+        model.addAttribute("prixMin", prixMin);
+        model.addAttribute("prixMax", prixMax);
+        model.addAttribute("totalMin", totalMin);
+        model.addAttribute("totalMax", totalMax);
+
         return "collecte/liste-en-attente";
     }
 
 
 
     @GetMapping("/valides")
-    public String lotsValides(Model model) {
+    public String lotsValides(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsValides = new ArrayList<>();
 
@@ -220,12 +247,24 @@ public class CollecteController {
             }
         }
 
+        lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+
         Double quantiteTotale = lotsValides.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsValides.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
 
         model.addAttribute("lots", lotsValides);
         model.addAttribute("quantiteTotale", quantiteTotale);
         model.addAttribute("recetteTotale", recetteTotale);
+
+        model.addAttribute("reference", reference);
+        model.addAttribute("dateMin", dateMin);
+        model.addAttribute("dateMax", dateMax);
+        model.addAttribute("quantiteMin", quantiteMin);
+        model.addAttribute("quantiteMax", quantiteMax);
+        model.addAttribute("prixMin", prixMin);
+        model.addAttribute("prixMax", prixMax);
+        model.addAttribute("totalMin", totalMin);
+        model.addAttribute("totalMax", totalMax);
 
         return "collecte/liste-valides";
     }
@@ -246,4 +285,67 @@ public class CollecteController {
             return erreur;
         }
     }
+
+
+    private List<LotPaddy> filtrerLots(List<LotPaddy> lots, String reference, String dateMin, String dateMax, Double quantiteMin, Double quantiteMax, Double prixMin, Double prixMax, Double totalMin, Double totalMax) {
+        return lots.stream()
+            .filter(lot -> {
+                // Filtre référence (texte partiel)
+                if (reference != null && !reference.trim().isEmpty()) {
+                    if (!lot.getReference().toLowerCase().contains(reference.trim().toLowerCase())) {
+                        return false;
+                    }
+                }
+
+                // Filtre date min
+                if (dateMin != null && !dateMin.isEmpty()) {
+                    LocalDate min = LocalDate.parse(dateMin);
+                    if (lot.getDate().isBefore(min)) {
+                        return false;
+                    }
+                }
+
+                // Filtre date max
+                if (dateMax != null && !dateMax.isEmpty()) {
+                    LocalDate max = LocalDate.parse(dateMax);
+                    if (lot.getDate().isAfter(max)) {
+                        return false;
+                    }
+                }
+
+                // Filtre quantité min
+                if (quantiteMin != null && lot.getQuantite() < quantiteMin) {
+                    return false;
+                }
+
+                // Filtre quantité max
+                if (quantiteMax != null && lot.getQuantite() > quantiteMax) {
+                    return false;
+                }
+
+                // Filtre prix unitaire min
+                if (prixMin != null && lot.getCollecte().getPrixUnitaire() < prixMin) {
+                    return false;
+                }
+
+                // Filtre prix unitaire max
+                if (prixMax != null && lot.getCollecte().getPrixUnitaire() > prixMax) {
+                    return false;
+                }
+
+                // Filtre total min
+                if (totalMin != null && lot.getPrixCollecte() < totalMin) {
+                    return false;
+                }
+
+                // Filtre total max
+                if (totalMax != null && lot.getPrixCollecte() > totalMax) {
+                    return false;
+                }
+
+                return true;
+            })
+            .toList();
+    }
+
 }
