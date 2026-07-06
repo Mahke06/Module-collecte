@@ -78,11 +78,47 @@
         <table border="1">
             <thead>
                 <tr>
-                    <th>Référence</th>
-                    <th>Date</th>
-                    <th>Quantité (kg)</th>
-                    <th>Prix unitaire (Ar)</th>
-                    <th>Total (Ar)</th>
+                    <!-- ✅ En-têtes TRIABLES -->
+                    <th class="sortable">
+                        <a href="${pageContext.request.contextPath}/collectes/liste?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&sortBy=reference&sortOrder=${sortBy == 'reference' && sortOrder == 'asc' ? 'desc' : 'asc'}">
+                            Référence 
+                            <c:if test="${sortBy == 'reference'}">
+                                <span class="sort-indicator">${sortOrder == 'asc' ? '▲' : '▼'}</span>
+                            </c:if>
+                        </a>
+                    </th>
+                    <th class="sortable">
+                        <a href="${pageContext.request.contextPath}/collectes/liste?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&sortBy=date&sortOrder=${sortBy == 'date' && sortOrder == 'asc' ? 'desc' : 'asc'}">
+                            Date 
+                            <c:if test="${sortBy == 'date'}">
+                                <span class="sort-indicator">${sortOrder == 'asc' ? '▲' : '▼'}</span>
+                            </c:if>
+                        </a>
+                    </th>
+                    <th class="sortable">
+                        <a href="${pageContext.request.contextPath}/collectes/liste?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&sortBy=quantite&sortOrder=${sortBy == 'quantite' && sortOrder == 'asc' ? 'desc' : 'asc'}">
+                            Quantité (kg) 
+                            <c:if test="${sortBy == 'quantite'}">
+                                <span class="sort-indicator">${sortOrder == 'asc' ? '▲' : '▼'}</span>
+                            </c:if>
+                        </a>
+                    </th>
+                    <th class="sortable">
+                        <a href="${pageContext.request.contextPath}/collectes/liste?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&sortBy=prix&sortOrder=${sortBy == 'prix' && sortOrder == 'asc' ? 'desc' : 'asc'}">
+                            Prix unitaire (Ar) 
+                            <c:if test="${sortBy == 'prix'}">
+                                <span class="sort-indicator">${sortOrder == 'asc' ? '▲' : '▼'}</span>
+                            </c:if>
+                        </a>
+                    </th>
+                    <th class="sortable">
+                        <a href="${pageContext.request.contextPath}/collectes/liste?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&sortBy=total&sortOrder=${sortBy == 'total' && sortOrder == 'asc' ? 'desc' : 'asc'}">
+                            Total (Ar) 
+                            <c:if test="${sortBy == 'total'}">
+                                <span class="sort-indicator">${sortOrder == 'asc' ? '▲' : '▼'}</span>
+                            </c:if>
+                        </a>
+                    </th>
                     <th>Action</th>
                 </tr>
             </thead>
