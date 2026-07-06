@@ -22,7 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import java.util.Comparator;
 
 @Controller
 @RequestMapping("/collectes")
@@ -145,10 +147,13 @@ public class CollecteController {
 
 
     @GetMapping("/liste")
-    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
+    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax,
+    @RequestParam(required = false) String sortBy, @RequestParam(required = false) String sortOrder) {
         List<LotPaddy> lots = collecteService.listerLotsActif();
 
         lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+
+        lots = trierLots(lots, sortBy, sortOrder);
 
         Double quantiteTotale = collecteService.obtenirQuantiteTotale();
         Double recetteTotale = collecteService.obtenirRecetteTotale();
@@ -166,6 +171,9 @@ public class CollecteController {
         model.addAttribute("prixMax", prixMax);
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
+
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
 
         return "collecte/liste-lots";
     }
@@ -199,7 +207,8 @@ public class CollecteController {
 
 
     @GetMapping("/en-attente")
-    public String lotsEnAttente(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
+    public String lotsEnAttente(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, 
+    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsEnAttente = new ArrayList<>();
 
@@ -212,6 +221,8 @@ public class CollecteController {
         
         lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
 
+
+        lotsEnAttente = trierLots(lotsEnAttente, triePar, ordre);
 
         Double quantiteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
@@ -230,13 +241,17 @@ public class CollecteController {
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
 
+        model.addAttribute("triePar", triePar);
+        model.addAttribute("ordre", ordre);
+
         return "collecte/liste-en-attente";
     }
 
 
 
     @GetMapping("/valides")
-    public String lotsValides(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax) {
+    public String lotsValides(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, 
+    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsValides = new ArrayList<>();
 
@@ -248,6 +263,8 @@ public class CollecteController {
         }
 
         lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+
+        lotsValides = trierLots(lotsValides, triePar, ordre);
 
         Double quantiteTotale = lotsValides.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsValides.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
@@ -265,6 +282,9 @@ public class CollecteController {
         model.addAttribute("prixMax", prixMax);
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
+
+        model.addAttribute("triePar", triePar);
+        model.addAttribute("ordre", ordre);
 
         return "collecte/liste-valides";
     }
@@ -345,7 +365,52 @@ public class CollecteController {
 
                 return true;
             })
-            .toList();
+            .collect(Collectors.toList());
     }
 
+
+
+
+
+   private List<LotPaddy> trierLots(List<LotPaddy> lots, String trierPar, String ordre) {
+        if (trierPar == null || trierPar.isEmpty()) {
+            return lots;
+        }
+
+        Comparator<LotPaddy> comparateur = null;
+
+        switch (trierPar) {
+            case "reference":
+                comparateur = Comparator.comparing(lot -> lot.getReference());
+                break;
+
+            case "date":
+                comparateur = Comparator.comparing(lot -> lot.getDate());
+                break;
+
+            case "quantite":
+                comparateur = Comparator.comparing(lot -> lot.getQuantite());
+                break;
+
+            case "prix":
+                comparateur = Comparator.comparing(lot -> lot.getCollecte().getPrixUnitaire());
+                break;
+
+            case "total":
+                comparateur = Comparator.comparing(lot -> lot.getPrixCollecte());
+                break;
+        }
+
+        if (comparateur == null) {
+            return lots;
+        }
+
+        if ("desc".equalsIgnoreCase(ordre)) {
+            comparateur = comparateur.reversed();
+        }
+
+        lots.sort(comparateur);
+
+        return lots;
+    }
 }
