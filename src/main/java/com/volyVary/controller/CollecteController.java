@@ -10,6 +10,8 @@ import com.volyVary.service.CollecteService;
 import com.volyVary.service.ImportService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -147,21 +149,27 @@ public class CollecteController {
 
 
     @GetMapping("/liste")
-    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax,
-    @RequestParam(required = false) String sortBy, @RequestParam(required = false) String sortOrder) {
+    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, @RequestParam(defaultValue = "0") int page) {
         List<LotPaddy> lots = collecteService.listerLotsActif();
 
         lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
-
         lots = trierLots(lots, sortBy, sortOrder);
+
+        int pageMax = 10;
+        int startPage = page * pageMax;
+        int endPage = Math.min(startPage + pageMax, lots.size());
+        List<LotPaddy> lotsEnPage = startPage < lots.size() ? lots.subList(startPage, endPage) : List.of();
+        Page<LotPaddy> pageLots = new PageImpl<>(lotsEnPage, PageRequest.of(page, pageMax), lots.size());
 
         Double quantiteTotale = collecteService.obtenirQuantiteTotale();
         Double recetteTotale = collecteService.obtenirRecetteTotale();
 
-        model.addAttribute("lots", lots);
+        model.addAttribute("lots", pageLots.getContent());
+        model.addAttribute("pageCourante", pageLots.getNumber());
+        model.addAttribute("pageTotales", pageLots.getTotalPages());
         model.addAttribute("quantiteTotale", quantiteTotale != null ? quantiteTotale : 0);
         model.addAttribute("recetteTotale", recetteTotale != null ? recetteTotale : 0);
-
+        
         model.addAttribute("reference", reference);
         model.addAttribute("dateMin", dateMin);
         model.addAttribute("dateMax", dateMax);
