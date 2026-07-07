@@ -146,6 +146,30 @@
             </tbody>
         </table>
 
+                <%-- Pagination --%>
+        <c:if test="${pageTotales > 1}">
+            <div>
+                <c:if test="${pageCourante > 0}">
+                    <a href="${pageContext.request.contextPath}/collectes/liste?page=${pageCourante - 1}">Précédent</a>
+                </c:if>
+                <%-- Numeros de page --%>
+                <c:forEach var="i" begin="0" end="${pageTotales - 1}">
+                    <c:choose>
+                        <c:when test="${i == pageCourante}">
+                            <span>${i + 1}</span>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="${pageContext.request.contextPath}/collectes/liste?page=${i}">${i + 1}</a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+                <span>Page ${pageCourante + 1} sur ${pageTotales}</span>
+                <c:if test="${pageCourante < pageTotales - 1}">
+                    <a href="${pageContext.request.contextPath}/collectes/liste?page=${pageCourante + 1}">Suivant</a>
+                </c:if>
+            </div>
+        </c:if>
+
         <br>
         <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/collectes/nouveau'">
             Nouvelle collecte
