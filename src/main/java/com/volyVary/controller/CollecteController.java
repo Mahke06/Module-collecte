@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -149,11 +150,12 @@ public class CollecteController {
 
 
     @GetMapping("/liste")
-    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, @RequestParam(defaultValue = "0") int page) {
+    public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, @RequestParam(defaultValue = "0") int page,
+    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
         List<LotPaddy> lots = collecteService.listerLotsActif();
 
         lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
-        lots = trierLots(lots, sortBy, sortOrder);
+        lots = trierLots(lots, triePar, ordre);
 
         int pageMax = 10;
         int startPage = page * pageMax;
@@ -180,8 +182,8 @@ public class CollecteController {
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
 
-        model.addAttribute("sortBy", sortBy);
-        model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("triePar", triePar);
+        model.addAttribute("ordre", ordre);
 
         return "collecte/liste-lots";
     }
