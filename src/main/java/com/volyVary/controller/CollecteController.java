@@ -29,6 +29,24 @@ import java.util.stream.Collectors;
 
 import java.util.Comparator;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Chunk;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfWriter;
+import java.awt.Color;
+
 @Controller
 @RequestMapping("/collectes")
 public class CollecteController {
@@ -152,10 +170,7 @@ public class CollecteController {
     @GetMapping("/liste")
     public String listerLots(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, @RequestParam(defaultValue = "0") int page,
     @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
-        List<LotPaddy> lots = collecteService.listerLotsActif();
-
-        lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
-        lots = trierLots(lots, triePar, ordre);
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
 
         int pageMax = 10;
         int startPage = page * pageMax;
@@ -186,6 +201,153 @@ public class CollecteController {
         model.addAttribute("ordre", ordre);
 
         return "collecte/liste-lots";
+    }
+
+
+    @GetMapping("/export/csv")
+    public void exportCsv(
+            HttpServletResponse response,
+            @RequestParam(required = false) String reference,
+            @RequestParam(required = false) String dateMin,
+            @RequestParam(required = false) String dateMax,
+            @RequestParam(required = false) Double quantiteMin,
+            @RequestParam(required = false) Double quantiteMax,
+            @RequestParam(required = false) Double prixMin,
+            @RequestParam(required = false) Double prixMax,
+            @RequestParam(required = false) Double totalMin,
+            @RequestParam(required = false) Double totalMax,
+            @RequestParam(required = false) String triePar,
+            @RequestParam(required = false) String ordre) throws IOException {
+
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.csv");
+
+        try (PrintWriter w = response.getWriter()) {
+            w.println("Référence;Date;Quantité (kg);Prix unitaire (Ar);Total (Ar)");
+            for (LotPaddy lot : lots) {
+                w.printf("%s;%s;%.2f;%.0f;%.0f%n",
+                        lot.getReference(),
+                        lot.getDate(),
+                        lot.getQuantite(),
+                        lot.getCollecte().getPrixUnitaire(),
+                        lot.getPrixCollecte());
+            }
+        }
+    }
+
+
+    @GetMapping("/export/excel")
+    public void exportExcel(
+            HttpServletResponse response,
+            @RequestParam(required = false) String reference,
+            @RequestParam(required = false) String dateMin,
+            @RequestParam(required = false) String dateMax,
+            @RequestParam(required = false) Double quantiteMin,
+            @RequestParam(required = false) Double quantiteMax,
+            @RequestParam(required = false) Double prixMin,
+            @RequestParam(required = false) Double prixMax,
+            @RequestParam(required = false) Double totalMin,
+            @RequestParam(required = false) Double totalMax,
+            @RequestParam(required = false) String triePar,
+            @RequestParam(required = false) String ordre) throws IOException {
+
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.xlsx");
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Lots de paddy");
+
+        String[] headers = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
+        XSSFRow headerRow = sheet.createRow(0);
+        for (int i = 0; i < headers.length; i++) {
+            headerRow.createCell(i).setCellValue(headers[i]);
+        }
+
+        int rowNum = 1;
+        for (LotPaddy lot : lots) {
+            XSSFRow row = sheet.createRow(rowNum++);
+            row.createCell(0).setCellValue(lot.getReference());
+            row.createCell(1).setCellValue(lot.getDate().toString());
+            row.createCell(2).setCellValue(lot.getQuantite());
+            row.createCell(3).setCellValue(lot.getCollecte().getPrixUnitaire());
+            row.createCell(4).setCellValue(lot.getPrixCollecte());
+        }
+
+        for (int i = 0; i < headers.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
+
+
+    @GetMapping("/export/pdf")
+    public void exportPdf(
+            HttpServletResponse response,
+            @RequestParam(required = false) String reference,
+            @RequestParam(required = false) String dateMin,
+            @RequestParam(required = false) String dateMax,
+            @RequestParam(required = false) Double quantiteMin,
+            @RequestParam(required = false) Double quantiteMax,
+            @RequestParam(required = false) Double prixMin,
+            @RequestParam(required = false) Double prixMax,
+            @RequestParam(required = false) Double totalMin,
+            @RequestParam(required = false) Double totalMax,
+            @RequestParam(required = false) String triePar,
+            @RequestParam(required = false) String ordre) throws IOException, DocumentException {
+
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.pdf");
+
+        Document document = new Document();
+        PdfWriter.getInstance(document, response.getOutputStream());
+        document.open();
+
+        document.add(new Paragraph("Liste des lots de paddy"));
+        document.add(Chunk.NEWLINE);
+
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+
+        String[] headers = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
+        for (String h : headers) {
+            PdfPCell cell = new PdfPCell(new Phrase(h));
+            cell.setBackgroundColor(new Color(200, 200, 200));
+            table.addCell(cell);
+        }
+
+        for (LotPaddy lot : lots) {
+            table.addCell(lot.getReference());
+            table.addCell(lot.getDate().toString());
+            table.addCell(String.format("%.2f", lot.getQuantite()));
+            table.addCell(String.format("%.0f", lot.getCollecte().getPrixUnitaire()));
+            table.addCell(String.format("%.0f", lot.getPrixCollecte()));
+        }
+
+        document.add(table);
+        document.close();
+    }
+
+
+    private List<LotPaddy> getLotsFiltresEtTries(
+            String reference, String dateMin, String dateMax,
+            Double quantiteMin, Double quantiteMax, Double prixMin, Double prixMax,
+            Double totalMin, Double totalMax, String triePar, String ordre) {
+        List<LotPaddy> lots = collecteService.listerLotsActif();
+        lots = filtrerLots(lots, reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+        lots = trierLots(lots, triePar, ordre);
+        return lots;
     }
 
 

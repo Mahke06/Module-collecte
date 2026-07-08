@@ -171,6 +171,21 @@
         </c:if>
 
         <br>
+        <div>
+            <a href="${pageContext.request.contextPath}/collectes/export/csv?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+               style="display:inline-block;padding:6px 12px;margin-right:6px;background:#4CAF50;color:white;text-decoration:none;border-radius:4px;">
+                Exporter CSV
+            </a>
+            <a href="${pageContext.request.contextPath}/collectes/export/excel?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+               style="display:inline-block;padding:6px 12px;margin-right:6px;background:#2196F3;color:white;text-decoration:none;border-radius:4px;">
+                Exporter Excel
+            </a>
+            <a href="${pageContext.request.contextPath}/collectes/export/pdf?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+               style="display:inline-block;padding:6px 12px;margin-right:6px;background:#f44336;color:white;text-decoration:none;border-radius:4px;">
+                Exporter PDF
+            </a>
+        </div>
+        <br>
         <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/collectes/nouveau'">
             Nouvelle collecte
         </button>
