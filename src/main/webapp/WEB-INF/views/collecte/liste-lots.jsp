@@ -15,26 +15,7 @@
 <body>
 
 <div class="app-shell">
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <svg class="logo-mark" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2563EB"/><path d="M9 11l7 12 7-12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="logo-text">VOLY VARY</span>
-        </div>
-        <div class="sidebar-user">
-            <div class="avatar">AD</div>
-            <div class="who"><strong>Administrateur</strong><span>Administrateur</span></div>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="${pageContext.request.contextPath}/dashboard" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Dashboard</span></a>
-            <a href="${pageContext.request.contextPath}/collectes/liste" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg><span>Collecte</span></a>
-        </nav>
-        <div class="sidebar-footer">
-            <button class="sidebar-toggle">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px"><path d="M15 18l-6-6 6-6"/></svg>
-                <span>Reduire</span>
-            </button>
-        </div>
-    </aside>
+    <jsp:include page="/WEB-INF/views/sidebar/sidebar.jsp" />
     <div class="main-content">
         <header class="topbar">
             <button class="icon-btn menu-btn">

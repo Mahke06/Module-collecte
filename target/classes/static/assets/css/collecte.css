@@ -43,3 +43,26 @@
     .header-actions { flex-direction: column; align-items: stretch; }
     .export-bar { flex-direction: column; align-items: flex-start; }
 }
+
+
+/* Style beige pour les statistiques "en attente" */
+.stat-card.stat-attente {
+    background-color: #FDF6E3;      /* beige clair */
+    border: 1px solid #E8D9B5;      /* bordure beige un peu plus foncée */
+    border-left: 4px solid #C9A96A; /* accent beige/doré à gauche */
+}
+
+.stat-card.stat-attente .stat-value {
+    color: #8B6914; /* texte brun-doré pour contraste */
+}
+
+/* Style vert pour les statistiques "validées" */
+.stat-card.stat-valide {
+    background-color: #F0FDF4;      /* vert très clair */
+    border: 1px solid #BBF7D0;      /* bordure vert clair */
+    border-left: 4px solid #22C55E; /* accent vert vif à gauche */
+}
+
+.stat-card.stat-valide .stat-value {
+    color: #15803D; /* vert foncé pour le texte */
+}
