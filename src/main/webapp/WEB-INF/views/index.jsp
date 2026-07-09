@@ -23,7 +23,7 @@
                 </p>
                 
                 <div style="display: flex; gap: 15px; justify-content: center;">
-                    <a href="/collectes/liste" class="btn btn-green">Voir les collectes</a>
+                    <a href="/collectes/valides" class="btn btn-green">Voir les collectes</a>
                     <a href="/collectes/nouveau" class="btn btn-yellow">Nouvelle collecte</a>
                 </div>
             </div>

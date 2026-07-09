@@ -2,119 +2,200 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Lots en attente</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lots en attente - VOLY VARY</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/variables.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte.css">
 </head>
 <body>
-    <section>
-        <h2>Collecte: Lots en attente de paiement</h2>
 
-        <div>
-            <a href="${pageContext.request.contextPath}/collectes/valides">→ Voir les lots validés</a>
+    <div class="page-heading">
+        <h1>Collecte : lots en attente de paiement</h1>
+        <p>Lots collectés en attente de validation</p>
+        <div class="tabs-nav">
+            <a href="${pageContext.request.contextPath}/collectes/en-attente" class="btn active">
+                En attente
+            </a>
+            <a href="${pageContext.request.contextPath}/collectes/valides" class="btn">
+                Validés
+            </a>
         </div>
+    </div>
 
+    <div class="header-actions">
+        <div></div>
+        <a href="${pageContext.request.contextPath}/collectes/nouveau" class="btn btn-primary btn-sm">
+            + Nouvelle collecte
+        </a>
+    </div>
 
-        <form action="${pageContext.request.contextPath}/collectes/en-attente" method="get">
-            <table>
-                <tr>
-                    <td><label>Référence :</label></td>
-                    <td><input type="text" name="reference" value="${reference}" placeholder="Ex: LP001"></td>
-                </tr>
-                <tr>
-                    <td><label>Date :</label></td>
-                    <td>
-                        Min : <input type="date" name="dateMin" value="${dateMin}">
-                        Max : <input type="date" name="dateMax" value="${dateMax}">
-                    </td>
-                </tr>
-                <tr>
-                    <td><label>Quantité (kg) :</label></td>
-                    <td>
-                        Min : <input type="number" name="quantiteMin" value="${quantiteMin}" step="0.01" placeholder="0">
-                        Max : <input type="number" name="quantiteMax" value="${quantiteMax}" step="0.01" placeholder="99999">
-                    </td>
-                </tr>
-                <tr>
-                    <td><label>Prix unitaire (Ar) :</label></td>
-                    <td>
-                        Min : <input type="number" name="prixMin" value="${prixMin}" step="0.01" placeholder="0">
-                        Max : <input type="number" name="prixMax" value="${prixMax}" step="0.01" placeholder="99999">
-                    </td>
-                </tr>
-                <tr>
-                    <td><label>Total (Ar) :</label></td>
-                    <td>
-                        Min : <input type="number" name="totalMin" value="${totalMin}" step="0.01" placeholder="0">
-                        Max : <input type="number" name="totalMax" value="${totalMax}" step="0.01" placeholder="99999999">
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <button type="submit">Rechercher</button>
-                        <a href="${pageContext.request.contextPath}/collectes/liste">Réinitialiser</a>
-                    </td>
-                </tr>
-            </table>
-        </form>
-
-        <br>
-
-
-
-        <br>
-
-        <div>
-            <p><strong>Quantité totale :</strong>
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">
                 <fmt:formatNumber value="${quantiteTotale}" pattern="#,##0.##"/> kg
-            </p>
-            <p><strong>Recette totale :</strong>
-                <fmt:formatNumber value="${recetteTotale}" pattern="#,##0"/> Ar
-            </p>
+            </div>
+            <div class="stat-label">Quantité totale en attente</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-value">
+                <fmt:formatNumber value="${recetteTotale}" pattern="#,##0"/> Ar
+            </div>
+            <div class="stat-label">Recette totale en attente</div>
+        </div>
+    </div>
 
-        <br>
+    <div class="section-card">
+        <div class="card">
+            <div class="card-body">
+                <form action="${pageContext.request.contextPath}/collectes/en-attente" method="get">
+                    <input type="hidden" name="page" value="0">
+                    <div class="filtre-grid">
+                        <div class="form-field">
+                            <label>Référence</label>
+                            <input type="text" name="reference" value="${reference}" placeholder="Ex: LP001">
+                        </div>
+                        <div class="form-field">
+                            <label>Date min</label>
+                            <input type="date" name="dateMin" value="${dateMin}">
+                        </div>
+                        <div class="form-field">
+                            <label>Date max</label>
+                            <input type="date" name="dateMax" value="${dateMax}">
+                        </div>
+                        <div class="form-field">
+                            <label>Quantité min (kg)</label>
+                            <input type="number" name="quantiteMin" value="${quantiteMin}" step="0.01">
+                        </div>
+                        <div class="form-field">
+                            <label>Quantité max (kg)</label>
+                            <input type="number" name="quantiteMax" value="${quantiteMax}" step="0.01">
+                        </div>
+                        <div class="form-field">
+                            <label>Prix min (Ar)</label>
+                            <input type="number" name="prixMin" value="${prixMin}" step="0.01">
+                        </div>
+                        <div class="form-field">
+                            <label>Prix max (Ar)</label>
+                            <input type="number" name="prixMax" value="${prixMax}" step="0.01">
+                        </div>
+                        <div class="form-field">
+                            <label>Total min (Ar)</label>
+                            <input type="number" name="totalMin" value="${totalMin}" step="0.01">
+                        </div>
+                        <div class="form-field">
+                            <label>Total max (Ar)</label>
+                            <input type="number" name="totalMax" value="${totalMax}" step="0.01">
+                        </div>
 
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Référence</th>
-                    <th>Date</th>
-                    <th>Quantité (kg)</th>
-                    <th>Prix unitaire (Ar)</th>
-                    <th>Total (Ar)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="lot" items="${lots}">
-                    <tr>
-                        <td>${lot.reference}</td>
-                        <td>${lot.date}</td>
-                        <td><fmt:formatNumber value="${lot.quantite}" pattern="#,##0.##"/></td>
-                        <td><fmt:formatNumber value="${lot.collecte.prixUnitaire}" pattern="#,##0"/></td>
-                        <td><fmt:formatNumber value="${lot.prixCollecte}" pattern="#,##0"/></td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/collectes/detail/${lot.idLotPaddy}">
-                                Voir détail
-                            </a>
-                        </td>
-                    </tr>
-                </c:forEach>
+                        <div class="filtre-actions">
+                            <button type="submit" class="btn btn-primary">🔍 Rechercher</button>
+                            <a href="${pageContext.request.contextPath}/collectes/en-attente" class="btn btn-outline">✖ Réinitialiser</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-                <c:if test="${empty lots}">
-                    <tr>
-                        <td colspan="6" style="text-align: center;">Aucun lot en attente</td>
-                    </tr>
-                </c:if>
-            </tbody>
-        </table>
+    <div class="section-card">
+        <div class="card">
+            <div class="table-wrapper">
+                <table class="table-lots">
+                    <thead>
+                        <tr>
+                            <th>
+                                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=0&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=reference&ordre=${triePar == 'reference' && ordre == 'asc' ? 'desc' : 'asc'}">
+                                    Référence <c:if test="${triePar == 'reference'}">${ordre == 'asc' ? '▲' : '▼'}</c:if>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=0&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=date&ordre=${triePar == 'date' && ordre == 'asc' ? 'desc' : 'asc'}">
+                                    Date <c:if test="${triePar == 'date'}">${ordre == 'asc' ? '▲' : '▼'}</c:if>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=0&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=quantite&ordre=${triePar == 'quantite' && ordre == 'asc' ? 'desc' : 'asc'}">
+                                    Quantité (kg) <c:if test="${triePar == 'quantite'}">${ordre == 'asc' ? '▲' : '▼'}</c:if>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=0&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=prix&ordre=${triePar == 'prix' && ordre == 'asc' ? 'desc' : 'asc'}">
+                                    Prix unitaire (Ar) <c:if test="${triePar == 'prix'}">${ordre == 'asc' ? '▲' : '▼'}</c:if>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=0&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=total&ordre=${triePar == 'total' && ordre == 'asc' ? 'desc' : 'asc'}">
+                                    Total (Ar) <c:if test="${triePar == 'total'}">${ordre == 'asc' ? '▲' : '▼'}</c:if>
+                                </a>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="lot" items="${lots}">
+                            <tr>
+                                <td>${lot.reference}</td>
+                                <td>${lot.date}</td>
+                                <td><fmt:formatNumber value="${lot.quantite}" pattern="#,##0.##"/> kg</td>
+                                <td><fmt:formatNumber value="${lot.collecte.prixUnitaire}" pattern="#,##0"/> Ar</td>
+                                <td><fmt:formatNumber value="${lot.prixCollecte}" pattern="#,##0"/> Ar</td>
+                                <td>
+                                    <a class="btn btn-outline btn-sm" href="${pageContext.request.contextPath}/collectes/detail/${lot.idLotPaddy}">
+                                        👁 Voir
+                                    </a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                        <c:if test="${empty lots}">
+                            <tr>
+                                <td colspan="6" class="vide">Aucun lot en attente</td>
+                            </tr>
+                        </c:if>
+                    </tbody>
+                </table>
+            </div>
 
-        <br>
-        <button type="button" onclick="window.location.href='${pageContext.request.contextPath}/collectes/nouveau'">
-            Nouvelle collecte
-        </button>
-    </section>
+            <div class="export-bar">
+                <span class="export-label">Exporter la liste filtrée :</span>
+                <div class="export-btns">
+                    <a href="${pageContext.request.contextPath}/collectes/en-attente/exporter?format=csv&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                       class="btn btn-outline btn-sm">📄 CSV</a>
+                    <a href="${pageContext.request.contextPath}/collectes/en-attente/exporter?format=excel&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                       class="btn btn-outline btn-sm">📊 Excel</a>
+                    <a href="${pageContext.request.contextPath}/collectes/en-attente/exporter?format=pdf&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                       class="btn btn-outline btn-sm">📕 PDF</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <c:if test="${pageTotales > 1}">
+        <div class="pagination">
+            <c:if test="${pageCourante > 0}">
+                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=${pageCourante - 1}&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}">← Précédent</a>
+            </c:if>
+
+            <c:forEach var="i" begin="0" end="${pageTotales - 1}">
+                <c:choose>
+                    <c:when test="${i == pageCourante}">
+                        <span class="active">${i + 1}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${pageContext.request.contextPath}/collectes/en-attente?page=${i}&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}">${i + 1}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <c:if test="${pageCourante < pageTotales - 1}">
+                <a href="${pageContext.request.contextPath}/collectes/en-attente?page=${pageCourante + 1}&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}">Suivant →</a>
+            </c:if>
+        </div>
+    </c:if>
+
 </body>
 </html>

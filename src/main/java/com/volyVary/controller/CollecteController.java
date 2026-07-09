@@ -379,8 +379,20 @@ public class CollecteController {
 
 
     @GetMapping("/en-attente")
-    public String lotsEnAttente(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, 
-    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
+    public String lotsEnAttente(Model model,
+            @RequestParam(required = false) String reference,
+            @RequestParam(required = false) String dateMin,
+            @RequestParam(required = false) String dateMax,
+            @RequestParam(required = false) Double quantiteMin,
+            @RequestParam(required = false) Double quantiteMax,
+            @RequestParam(required = false) Double prixMin,
+            @RequestParam(required = false) Double prixMax,
+            @RequestParam(required = false) Double totalMin,
+            @RequestParam(required = false) Double totalMax,
+            @RequestParam(required = false) String triePar,
+            @RequestParam(required = false) String ordre,
+            @RequestParam(defaultValue = "0") int page) {
+
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsEnAttente = new ArrayList<>();
 
@@ -390,19 +402,25 @@ public class CollecteController {
                 lotsEnAttente.add(lot);
             }
         }
-        
-        lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
 
-
+        lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
         lotsEnAttente = trierLots(lotsEnAttente, triePar, ordre);
 
         Double quantiteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
 
-        model.addAttribute("lots", lotsEnAttente);
+        int pageMax = 10;
+        int startPage = page * pageMax;
+        int endPage = Math.min(startPage + pageMax, lotsEnAttente.size());
+        List<LotPaddy> lotsEnPage = startPage < lotsEnAttente.size() ? lotsEnAttente.subList(startPage, endPage) : List.of();
+        Page<LotPaddy> pageLots = new PageImpl<>(lotsEnPage, PageRequest.of(page, pageMax), lotsEnAttente.size());
+
+        model.addAttribute("lots", pageLots.getContent());
+        model.addAttribute("pageCourante", pageLots.getNumber());
+        model.addAttribute("pageTotales", pageLots.getTotalPages());
         model.addAttribute("quantiteTotale", quantiteTotale);
         model.addAttribute("recetteTotale", recetteTotale);
-
         model.addAttribute("reference", reference);
         model.addAttribute("dateMin", dateMin);
         model.addAttribute("dateMax", dateMax);
@@ -412,7 +430,6 @@ public class CollecteController {
         model.addAttribute("prixMax", prixMax);
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
-
         model.addAttribute("triePar", triePar);
         model.addAttribute("ordre", ordre);
 
@@ -420,10 +437,21 @@ public class CollecteController {
     }
 
 
-
     @GetMapping("/valides")
-    public String lotsValides(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, 
-    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) {
+    public String lotsValides(Model model,
+            @RequestParam(required = false) String reference,
+            @RequestParam(required = false) String dateMin,
+            @RequestParam(required = false) String dateMax,
+            @RequestParam(required = false) Double quantiteMin,
+            @RequestParam(required = false) Double quantiteMax,
+            @RequestParam(required = false) Double prixMin,
+            @RequestParam(required = false) Double prixMax,
+            @RequestParam(required = false) Double totalMin,
+            @RequestParam(required = false) Double totalMax,
+            @RequestParam(required = false) String triePar,
+            @RequestParam(required = false) String ordre,
+            @RequestParam(defaultValue = "0") int page) {
+
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsValides = new ArrayList<>();
 
@@ -434,17 +462,24 @@ public class CollecteController {
             }
         }
 
-        lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
-
+        lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax,
+                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
         lotsValides = trierLots(lotsValides, triePar, ordre);
 
         Double quantiteTotale = lotsValides.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsValides.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
 
-        model.addAttribute("lots", lotsValides);
+        int pageMax = 10;
+        int startPage = page * pageMax;
+        int endPage = Math.min(startPage + pageMax, lotsValides.size());
+        List<LotPaddy> lotsEnPage = startPage < lotsValides.size() ? lotsValides.subList(startPage, endPage) : List.of();
+        Page<LotPaddy> pageLots = new PageImpl<>(lotsEnPage, PageRequest.of(page, pageMax), lotsValides.size());
+
+        model.addAttribute("lots", pageLots.getContent());
+        model.addAttribute("pageCourante", pageLots.getNumber());
+        model.addAttribute("pageTotales", pageLots.getTotalPages());
         model.addAttribute("quantiteTotale", quantiteTotale);
         model.addAttribute("recetteTotale", recetteTotale);
-
         model.addAttribute("reference", reference);
         model.addAttribute("dateMin", dateMin);
         model.addAttribute("dateMax", dateMax);
@@ -454,7 +489,6 @@ public class CollecteController {
         model.addAttribute("prixMax", prixMax);
         model.addAttribute("totalMin", totalMin);
         model.addAttribute("totalMax", totalMax);
-
         model.addAttribute("triePar", triePar);
         model.addAttribute("ordre", ordre);
 
