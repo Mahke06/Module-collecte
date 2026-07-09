@@ -10,10 +10,13 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/variables.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte-3.css">
+    <style>
+       
+    </style>
 </head>
 <body>
-
-    <div class="page-heading">
+    <div class="page-heading no-print">
         <div>
             <h1>Facture de Collecte</h1>
             <p>Détail du lot de paddy</p>
@@ -30,6 +33,7 @@
             </div>
             <div class="card-body">
 
+                <!-- ... Toutes les lignes de la facture ... -->
                 <div class="recap-row">
                     <span class="recap-label">Date</span>
                     <span class="recap-value">${lot.date}</span>
@@ -75,7 +79,7 @@
                     </span>
                 </div>
 
-                <div class="flow-actions">
+                <div class="flow-actions no-print">
                     <button type="button" class="btn btn-primary" onclick="window.print()">
                         Imprimer la facture
                     </button>

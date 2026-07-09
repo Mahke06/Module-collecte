@@ -1,0 +1,30 @@
+ @media print {
+            /* 1. Cacher l'en-tête et le pied de page du navigateur (si supporté) */
+            @page {
+                margin: 0;
+            }
+
+            /* 2. Cacher par défaut les éléments qu'on ne veut pas */
+            .no-print {
+                display: none !important;
+            }
+
+            /* 3. Masquer TOUT sauf le cadre de la facture */
+            body * {
+                visibility: hidden;
+            }
+            .recap-card, .recap-card * {
+                visibility: visible;
+            }
+
+            /* 4. Positionner la facture en haut de la page imprimée */
+            .recap-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 2cm;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }

@@ -93,8 +93,9 @@
             </div>
         </div>
     </div>
-
+    <script>
+        const CONTEXT_PATH = '${pageContext.request.contextPath}';
+    </script>
     <script src="${pageContext.request.contextPath}/assets/js/collecte.js"></script>
-
 </body>
 </html>
