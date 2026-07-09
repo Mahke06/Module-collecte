@@ -43,6 +43,10 @@ public class ClientService {
         }
         
         validerTelephone(telephone);
+        if (!clientRepository.TrouverParTelephone(telephone).isEmpty()) {
+            throw new IllegalArgumentException("Numero de telephone existe deja");
+        }
+        
         Client nouveauClient = new Client();
         nouveauClient.setNom(nom);
         nouveauClient.setPrenom(prenom);

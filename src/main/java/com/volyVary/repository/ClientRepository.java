@@ -17,7 +17,7 @@ public interface ClientRepository extends JpaRepository<Client, Integer> {
     Client TrouverParIdClient(int idClient);
 
     @Query("SELECT c FROM Client c WHERE c.telephone = :telephone")
-    Client TrouverParTelephone(String telephone);
+    List<Client> TrouverParTelephone(String telephone);
 
     @Query("SELECT c FROM Client c ORDER BY c.id DESC")
     List<Client> trouverClientsParIdDesc();
