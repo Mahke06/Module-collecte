@@ -1,15 +1,30 @@
-   @media print {
-            /* Tout ce qui a la classe 'no-print' sera invisible sur le papier */
+ @media print {
+            /* 1. Cacher l'en-tête et le pied de page du navigateur (si supporté) */
+            @page {
+                margin: 0;
+            }
+
+            /* 2. Cacher par défaut les éléments qu'on ne veut pas */
             .no-print {
                 display: none !important;
             }
-            
-            /* Optionnel : enlever les ombres et marges pour que ça s'imprime mieux sur papier blanc */
-            body {
-                background-color: white;
+
+            /* 3. Masquer TOUT sauf le cadre de la facture */
+            body * {
+                visibility: hidden;
             }
-            .section-card, .card {
-                box-shadow: none !important;
-                border: none !important;
+            .recap-card, .recap-card * {
+                visibility: visible;
+            }
+
+            /* 4. Positionner la facture en haut de la page imprimée */
+            .recap-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 2cm;
+                box-shadow: none;
+                border: 1px solid #ddd;
             }
         }

@@ -11,17 +11,17 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte-3.css">
+    <style>
+       
+    </style>
 </head>
 <body>
-
-    <!-- On ajoute 'no-print' sur la barre du haut si on ne veut pas l'imprimer, 
-         ou juste sur le bouton Retour -->
-    <div class="page-heading">
+    <div class="page-heading no-print">
         <div>
             <h1>Facture de Collecte</h1>
             <p>Détail du lot de paddy</p>
         </div>
-        <button type="button" class="btn btn-outline btn-sm no-print" onclick="window.history.back()">
+        <button type="button" class="btn btn-outline btn-sm" onclick="window.history.back()">
             Retour
         </button>
     </div>
@@ -33,6 +33,7 @@
             </div>
             <div class="card-body">
 
+                <!-- ... Toutes les lignes de la facture ... -->
                 <div class="recap-row">
                     <span class="recap-label">Date</span>
                     <span class="recap-value">${lot.date}</span>
