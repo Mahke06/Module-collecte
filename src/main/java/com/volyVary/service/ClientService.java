@@ -15,43 +15,40 @@ public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    private String genererNouvelleReference(){
-        List<Client> clients = clientRepository.trouverClientsParIdDesc();
+    //private String genererNouvelleReference(){
+        //List<Client> clients = clientRepository.trouverClientsParIdDesc();
 
-        if (clients.isEmpty()) {
-            return "C001";
+        //if (clients.isEmpty()) {
+            //return "C001";
+        //}
+
+        //String derniereReference = clients.get(0).getReference();
+        //if (derniereReference == null || derniereReference.isBlank()) {
+            //return "C001";
+        //}
+
+        //String prefix = derniereReference.replaceAll("\\D", "");
+        //if (prefix.isEmpty()) {
+            //return "C001";
+        //}
+        //int numero = Integer.parseInt(prefix);
+        //return String.format("C%03d", numero + 1);
+    //}
+
+
+    public Client trouverOuCreerClient(String reference, String nom, String prenom, String telephone, String dateHeure){
+        Client clientsExistants = clientRepository.TrouverParReference(reference);
+        if (clientsExistants != null) {
+            return clientsExistants;
         }
-
-        String derniereReference = clients.get(0).getReference();
-        if (derniereReference == null || derniereReference.isBlank()) {
-            return "C001";
-        }
-
-        String prefix = derniereReference.replaceAll("\\D", "");
-        if (prefix.isEmpty()) {
-            return "C001";
-        }
-        int numero = Integer.parseInt(prefix);
-        return String.format("C%03d", numero + 1);
-    }
-
-
-    public Client trouverOuCreerClient(String nom, String prenom, String telephone, String dateHeure){
+        
         validerTelephone(telephone);
-        Client clientExistant = clientRepository.TrouverParTelephone(telephone);
-        if (clientExistant != null) {
-            if (!clientExistant.getNom().equalsIgnoreCase(nom) || !clientExistant.getPrenom().equalsIgnoreCase(prenom)) {
-                throw new IllegalArgumentException("Numero existant");
-            }
-            return clientExistant;       
-        }
-
         Client nouveauClient = new Client();
         nouveauClient.setNom(nom);
         nouveauClient.setPrenom(prenom);
         nouveauClient.setTelephone(telephone);
         nouveauClient.setDateClient(LocalDateTime.parse(dateHeure).toLocalDate());
-        nouveauClient.setReference(genererNouvelleReference());
+        nouveauClient.setReference(reference);
         return clientRepository.save(nouveauClient); 
     }
 

@@ -79,9 +79,9 @@ public class CollecteController {
 
 
     @PostMapping("/calculer")
-    public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
+    public String calculerCollecte(@RequestParam String reference, @RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
         try { 
-        Client client = clientService.trouverOuCreerClient(nom, prenom, telephone, dateHeure);
+        Client client = clientService.trouverOuCreerClient(reference, nom, prenom, telephone, dateHeure);
         
         if (client == null) {
             return "redirect:/collectes/nouveau?erreur=Client non trouvé";
