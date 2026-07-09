@@ -17,7 +17,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Page;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -68,12 +67,12 @@ public class CollecteController {
         this.clientService = clientService;
     }
 
-
     @GetMapping("/nouveau")
     public String formulaireNouveauAchat(Model model) {
         model.addAttribute("now", LocalDateTime.now());
         List<Client> clients = clientRepository.findAll();
         model.addAttribute("clients", clients);
+        model.addAttribute("derniereReference", clientService.obtenirDerniereReference());
         return "collecte/formulaire-collecte";
     }
 
@@ -133,7 +132,7 @@ public class CollecteController {
     @PostMapping("/annuler")
     public String annulerAchat(@RequestParam int idLot) {
         collecteService.annulerAchat(idLot);
-        return "redirect:/collectes/liste";
+        return "redirect:/collectes/valides";
     }
 
 
@@ -205,22 +204,12 @@ public class CollecteController {
 
 
     @GetMapping("/export/csv")
-    public void exportCsv(
-            HttpServletResponse response,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String dateMin,
-            @RequestParam(required = false) String dateMax,
-            @RequestParam(required = false) Double quantiteMin,
-            @RequestParam(required = false) Double quantiteMax,
-            @RequestParam(required = false) Double prixMin,
-            @RequestParam(required = false) Double prixMax,
-            @RequestParam(required = false) Double totalMin,
-            @RequestParam(required = false) Double totalMax,
-            @RequestParam(required = false) String triePar,
-            @RequestParam(required = false) String ordre) throws IOException {
+    public void exportCsv(HttpServletResponse response, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin, 
+    @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax,
+    @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin,
+    @RequestParam(required = false) Double totalMax, @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) throws IOException {
 
-        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
 
         response.setContentType("text/csv; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.csv");
@@ -229,49 +218,39 @@ public class CollecteController {
             w.println("Référence;Date;Quantité (kg);Prix unitaire (Ar);Total (Ar)");
             for (LotPaddy lot : lots) {
                 w.printf("%s;%s;%.2f;%.0f;%.0f%n",
-                        lot.getReference(),
-                        lot.getDate(),
-                        lot.getQuantite(),
-                        lot.getCollecte().getPrixUnitaire(),
-                        lot.getPrixCollecte());
+                    lot.getReference(),
+                    lot.getDate(),
+                    lot.getQuantite(),
+                    lot.getCollecte().getPrixUnitaire(),
+                    lot.getPrixCollecte());
             }
         }
     }
 
 
     @GetMapping("/export/excel")
-    public void exportExcel(
-            HttpServletResponse response,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String dateMin,
-            @RequestParam(required = false) String dateMax,
-            @RequestParam(required = false) Double quantiteMin,
-            @RequestParam(required = false) Double quantiteMax,
-            @RequestParam(required = false) Double prixMin,
-            @RequestParam(required = false) Double prixMax,
-            @RequestParam(required = false) Double totalMin,
-            @RequestParam(required = false) Double totalMax,
-            @RequestParam(required = false) String triePar,
-            @RequestParam(required = false) String ordre) throws IOException {
+    public void exportExcel(HttpServletResponse response, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin,
+    @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax,
+    @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin,
+    @RequestParam(required = false) Double totalMax, @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre) throws IOException {
 
-        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.xlsx");
 
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("Lots de paddy");
+        XSSFWorkbook classeur = new XSSFWorkbook();
+        XSSFSheet feuille = classeur.createSheet("Lots de paddy");
 
-        String[] headers = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
-        XSSFRow headerRow = sheet.createRow(0);
-        for (int i = 0; i < headers.length; i++) {
-            headerRow.createCell(i).setCellValue(headers[i]);
+        String[] entetes = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
+        XSSFRow ligenEntete = feuille.createRow(0);
+        for (int i = 0; i < entetes.length; i++) {
+            ligenEntete.createCell(i).setCellValue(entetes[i]);
         }
 
-        int rowNum = 1;
+        int numeroLigne = 1;
         for (LotPaddy lot : lots) {
-            XSSFRow row = sheet.createRow(rowNum++);
+            XSSFRow row = feuille.createRow(numeroLigne++);
             row.createCell(0).setCellValue(lot.getReference());
             row.createCell(1).setCellValue(lot.getDate().toString());
             row.createCell(2).setCellValue(lot.getQuantite());
@@ -279,32 +258,22 @@ public class CollecteController {
             row.createCell(4).setCellValue(lot.getPrixCollecte());
         }
 
-        for (int i = 0; i < headers.length; i++) {
-            sheet.autoSizeColumn(i);
+        for (int i = 0; i < entetes.length; i++) {
+            feuille.autoSizeColumn(i);
         }
 
-        workbook.write(response.getOutputStream());
-        workbook.close();
+        classeur.write(response.getOutputStream());
+        classeur.close();
     }
 
 
     @GetMapping("/export/pdf")
-    public void exportPdf(
-            HttpServletResponse response,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String dateMin,
-            @RequestParam(required = false) String dateMax,
-            @RequestParam(required = false) Double quantiteMin,
-            @RequestParam(required = false) Double quantiteMax,
-            @RequestParam(required = false) Double prixMin,
-            @RequestParam(required = false) Double prixMax,
-            @RequestParam(required = false) Double totalMin,
-            @RequestParam(required = false) Double totalMax,
-            @RequestParam(required = false) String triePar,
-            @RequestParam(required = false) String ordre) throws IOException, DocumentException {
+    public void exportPdf(HttpServletResponse response, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin,
+    @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax, @RequestParam(required = false) Double prixMin, 
+    @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax, @RequestParam(required = false) String triePar,
+    @RequestParam(required = false) String ordre) throws IOException, DocumentException {
 
-        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
+        List<LotPaddy> lots = getLotsFiltresEtTries(reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax, triePar, ordre);
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=lots-paddy.pdf");
@@ -319,11 +288,11 @@ public class CollecteController {
         PdfPTable table = new PdfPTable(5);
         table.setWidthPercentage(100);
 
-        String[] headers = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
-        for (String h : headers) {
-            PdfPCell cell = new PdfPCell(new Phrase(h));
-            cell.setBackgroundColor(new Color(200, 200, 200));
-            table.addCell(cell);
+        String[] entetes = {"Référence", "Date", "Quantité (kg)", "Prix unitaire (Ar)", "Total (Ar)"};
+        for (String h : entetes) {
+            PdfPCell cellule = new PdfPCell(new Phrase(h));
+            cellule.setBackgroundColor(new Color(200, 200, 200));
+            table.addCell(cellule);
         }
 
         for (LotPaddy lot : lots) {
@@ -339,13 +308,10 @@ public class CollecteController {
     }
 
 
-    private List<LotPaddy> getLotsFiltresEtTries(
-            String reference, String dateMin, String dateMax,
-            Double quantiteMin, Double quantiteMax, Double prixMin, Double prixMax,
-            Double totalMin, Double totalMax, String triePar, String ordre) {
+    private List<LotPaddy> getLotsFiltresEtTries(String reference, String dateMin, String dateMax, Double quantiteMin, Double quantiteMax, Double prixMin, Double prixMax,
+    Double totalMin, Double totalMax, String triePar, String ordre) {
         List<LotPaddy> lots = collecteService.listerLotsActif();
-        lots = filtrerLots(lots, reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+        lots = filtrerLots(lots, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
         lots = trierLots(lots, triePar, ordre);
         return lots;
     }
@@ -383,19 +349,11 @@ public class CollecteController {
 
 
     @GetMapping("/en-attente")
-    public String lotsEnAttente(Model model,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String dateMin,
-            @RequestParam(required = false) String dateMax,
-            @RequestParam(required = false) Double quantiteMin,
-            @RequestParam(required = false) Double quantiteMax,
-            @RequestParam(required = false) Double prixMin,
-            @RequestParam(required = false) Double prixMax,
-            @RequestParam(required = false) Double totalMin,
-            @RequestParam(required = false) Double totalMax,
-            @RequestParam(required = false) String triePar,
-            @RequestParam(required = false) String ordre,
-            @RequestParam(defaultValue = "0") int page) {
+    public String lotsEnAttente(Model model,@RequestParam(required = false) String reference,
+    @RequestParam(required = false) String dateMin, @RequestParam(required = false) String dateMax,
+    @RequestParam(required = false) Double quantiteMin,@RequestParam(required = false) Double quantiteMax,@RequestParam(required = false) Double prixMin,
+    @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin, @RequestParam(required = false) Double totalMax,
+    @RequestParam(required = false) String triePar, @RequestParam(required = false) String ordre, @RequestParam(defaultValue = "0") int page) {
 
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsEnAttente = new ArrayList<>();
@@ -407,17 +365,16 @@ public class CollecteController {
             }
         }
 
-        lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+        lotsEnAttente = filtrerLots(lotsEnAttente, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
         lotsEnAttente = trierLots(lotsEnAttente, triePar, ordre);
 
         Double quantiteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsEnAttente.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
 
         int pageMax = 10;
-        int startPage = page * pageMax;
-        int endPage = Math.min(startPage + pageMax, lotsEnAttente.size());
-        List<LotPaddy> lotsEnPage = startPage < lotsEnAttente.size() ? lotsEnAttente.subList(startPage, endPage) : List.of();
+        int commencePage = page * pageMax;
+        int finPage = Math.min(commencePage + pageMax, lotsEnAttente.size());
+        List<LotPaddy> lotsEnPage = commencePage < lotsEnAttente.size() ? lotsEnAttente.subList(commencePage, finPage) : List.of();
         Page<LotPaddy> pageLots = new PageImpl<>(lotsEnPage, PageRequest.of(page, pageMax), lotsEnAttente.size());
 
         model.addAttribute("lots", pageLots.getContent());
@@ -442,19 +399,11 @@ public class CollecteController {
 
 
     @GetMapping("/valides")
-    public String lotsValides(Model model,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String dateMin,
-            @RequestParam(required = false) String dateMax,
-            @RequestParam(required = false) Double quantiteMin,
-            @RequestParam(required = false) Double quantiteMax,
-            @RequestParam(required = false) Double prixMin,
-            @RequestParam(required = false) Double prixMax,
-            @RequestParam(required = false) Double totalMin,
-            @RequestParam(required = false) Double totalMax,
-            @RequestParam(required = false) String triePar,
-            @RequestParam(required = false) String ordre,
-            @RequestParam(defaultValue = "0") int page) {
+    public String lotsValides(Model model, @RequestParam(required = false) String reference, @RequestParam(required = false) String dateMin,
+    @RequestParam(required = false) String dateMax, @RequestParam(required = false) Double quantiteMin, @RequestParam(required = false) Double quantiteMax,
+    @RequestParam(required = false) Double prixMin, @RequestParam(required = false) Double prixMax, @RequestParam(required = false) Double totalMin,
+    @RequestParam(required = false) Double totalMax, @RequestParam(required = false) String triePar,
+    @RequestParam(required = false) String ordre, @RequestParam(defaultValue = "0") int page) {
 
         List<LotPaddy> tousLesLots = collecteService.listerLotsActif();
         List<LotPaddy> lotsValides = new ArrayList<>();
@@ -466,17 +415,16 @@ public class CollecteController {
             }
         }
 
-        lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax,
-                quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
+        lotsValides = filtrerLots(lotsValides, reference, dateMin, dateMax, quantiteMin, quantiteMax, prixMin, prixMax, totalMin, totalMax);
         lotsValides = trierLots(lotsValides, triePar, ordre);
 
         Double quantiteTotale = lotsValides.stream().mapToDouble(LotPaddy::getQuantite).sum();
         Double recetteTotale = lotsValides.stream().mapToDouble(LotPaddy::getPrixCollecte).sum();
 
         int pageMax = 10;
-        int startPage = page * pageMax;
-        int endPage = Math.min(startPage + pageMax, lotsValides.size());
-        List<LotPaddy> lotsEnPage = startPage < lotsValides.size() ? lotsValides.subList(startPage, endPage) : List.of();
+        int commencePage = page * pageMax;
+        int finPage = Math.min(commencePage + pageMax, lotsValides.size());
+        List<LotPaddy> lotsEnPage = commencePage < lotsValides.size() ? lotsValides.subList(commencePage, finPage) : List.of();
         Page<LotPaddy> pageLots = new PageImpl<>(lotsEnPage, PageRequest.of(page, pageMax), lotsValides.size());
 
         model.addAttribute("lots", pageLots.getContent());
