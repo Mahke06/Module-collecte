@@ -350,13 +350,6 @@ public class CollecteController {
         return lots;
     }
 
-
-    @GetMapping("/chercher-client")
-    @ResponseBody
-    public Client chercherClient(@RequestParam String reference) {
-        return clientRepository.TrouverParReference(reference);
-    }
-
     @GetMapping("/imprimer/{id}")
     public String imprimer(@PathVariable int id, Model model) {
         LotPaddy lot = collecteService.obtenirLot(id);

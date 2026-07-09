@@ -8,37 +8,6 @@ window.addEventListener('load', function () {
             document.getElementById('date-heure').value = `${year}-${month}-${day}T${hours}:${minutes}`;
         });
 
-        function rechercherClient() {
-            const reference = document.getElementById('reference').value.trim();
-
-            if (!reference) {
-                document.getElementById('nom').value = '';
-                document.getElementById('prenom').value = '';
-                document.getElementById('telephone').value = '';
-                return;
-            }
-
-            fetch(window.contextPath + '/collectes/chercher-client?reference=' + encodeURIComponent(reference))
-                .then(response => response.json())
-                .then(client => {
-                    if (client && client.nom) {
-                        document.getElementById('nom').value = client.nom || '';
-                        document.getElementById('prenom').value = client.prenom || '';
-                        document.getElementById('telephone').value = client.telephone || '';
-                    } else {
-                        document.getElementById('nom').value = '';
-                        document.getElementById('prenom').value = '';
-                        document.getElementById('telephone').value = '';
-                    }
-                })
-                .catch(error => {
-                    console.error('Erreur:', error);
-                    document.getElementById('nom').value = '';
-                    document.getElementById('prenom').value = '';
-                    document.getElementById('telephone').value = '';
-                });
-        }
-
         function importerExcel() {
             const fichier = document.getElementById('fichier-excel').files[0];
             const messageDiv = document.getElementById('message-import');
