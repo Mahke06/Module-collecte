@@ -10,15 +10,18 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/variables.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte-3.css">
 </head>
 <body>
 
+    <!-- On ajoute 'no-print' sur la barre du haut si on ne veut pas l'imprimer, 
+         ou juste sur le bouton Retour -->
     <div class="page-heading">
         <div>
             <h1>Facture de Collecte</h1>
             <p>Détail du lot de paddy</p>
         </div>
-        <button type="button" class="btn btn-outline btn-sm" onclick="window.history.back()">
+        <button type="button" class="btn btn-outline btn-sm no-print" onclick="window.history.back()">
             Retour
         </button>
     </div>
@@ -75,7 +78,7 @@
                     </span>
                 </div>
 
-                <div class="flow-actions">
+                <div class="flow-actions no-print">
                     <button type="button" class="btn btn-primary" onclick="window.print()">
                         Imprimer la facture
                     </button>

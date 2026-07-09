@@ -161,18 +161,18 @@
             </div>
 
             <div class="export-bar">
-                <span class="export-label">Exporter la liste filtrée :</span>
-                <div class="export-btns">
-                    <a href="${pageContext.request.contextPath}/collectes/valides/exporter?format=csv&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
-                       class="btn btn-outline btn-sm">📄 CSV</a>
-                    <a href="${pageContext.request.contextPath}/collectes/valides/exporter?format=excel&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
-                       class="btn btn-outline btn-sm">📊 Excel</a>
-                    <a href="${pageContext.request.contextPath}/collectes/valides/exporter?format=pdf&reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
-                       class="btn btn-outline btn-sm">📕 PDF</a>
-                </div>
+            <span class="export-label">Exporter la liste filtrée :</span>
+            <div class="export-btns">
+                <a href="${pageContext.request.contextPath}/collectes/export/csv?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                class="btn btn-outline btn-sm">📄 CSV</a>
+                
+                <a href="${pageContext.request.contextPath}/collectes/export/excel?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                class="btn btn-outline btn-sm">📊 Excel</a>
+                
+                <a href="${pageContext.request.contextPath}/collectes/export/pdf?reference=${reference}&dateMin=${dateMin}&dateMax=${dateMax}&quantiteMin=${quantiteMin}&quantiteMax=${quantiteMax}&prixMin=${prixMin}&prixMax=${prixMax}&totalMin=${totalMin}&totalMax=${totalMax}&triePar=${triePar}&ordre=${ordre}"
+                class="btn btn-outline btn-sm">📕 PDF</a>
             </div>
         </div>
-    </div>
 
     <c:if test="${pageTotales > 1}">
         <div class="pagination">

@@ -1,0 +1,15 @@
+   @media print {
+            /* Tout ce qui a la classe 'no-print' sera invisible sur le papier */
+            .no-print {
+                display: none !important;
+            }
+            
+            /* Optionnel : enlever les ombres et marges pour que ça s'imprime mieux sur papier blanc */
+            body {
+                background-color: white;
+            }
+            .section-card, .card {
+                box-shadow: none !important;
+                border: none !important;
+            }
+        }
