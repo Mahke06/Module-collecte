@@ -375,7 +375,11 @@ public class CollecteController {
         return "collecte/imprimer";
     }
     
-
+    @GetMapping("/chercher-client")
+    @ResponseBody
+    public Client chercherClient(@RequestParam String reference) {
+        return clientRepository.TrouverParReference(reference);
+    }
 
 
     @GetMapping("/en-attente")
