@@ -47,6 +47,7 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfWriter;
 import java.awt.Color;
 
+
 @Controller
 @RequestMapping("/collectes")
 public class CollecteController {
@@ -76,12 +77,11 @@ public class CollecteController {
         model.addAttribute("clients", clients);
         return "collecte/formulaire-collecte";
     }
-
-
+    
     @PostMapping("/calculer")
-    public String calculerCollecte(@RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
+    public String calculerCollecte(@RequestParam String reference, @RequestParam String nom, @RequestParam String prenom, @RequestParam String telephone, @RequestParam String dateHeure, @RequestParam Double quantite, @RequestParam Double prixUnitaire, @RequestParam Double tauxHumidite, Model model) {
         try { 
-        Client client = clientService.trouverOuCreerClient(nom, prenom, telephone, dateHeure);
+        Client client = clientService.trouverOuCreerClient(reference, nom, prenom, telephone, dateHeure);
         
         if (client == null) {
             return "redirect:/collectes/nouveau?erreur=Client non trouvé";
@@ -350,6 +350,12 @@ public class CollecteController {
         return lots;
     }
 
+
+    @GetMapping("/chercher-client")
+    @ResponseBody
+    public Client chercherClient(@RequestParam String reference) {
+        return clientRepository.TrouverParReference(reference);
+    }
 
     @GetMapping("/imprimer/{id}")
     public String imprimer(@PathVariable int id, Model model) {

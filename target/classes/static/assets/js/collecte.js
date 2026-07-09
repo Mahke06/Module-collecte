@@ -8,6 +8,37 @@ window.addEventListener('load', function () {
             document.getElementById('date-heure').value = `${year}-${month}-${day}T${hours}:${minutes}`;
         });
 
+        function rechercherClient() {
+            const reference = document.getElementById('reference').value.trim();
+
+            if (!reference) {
+                document.getElementById('nom').value = '';
+                document.getElementById('prenom').value = '';
+                document.getElementById('telephone').value = '';
+                return;
+            }
+
+            fetch(window.contextPath + '/collectes/chercher-client?reference=' + encodeURIComponent(reference))
+                .then(response => response.json())
+                .then(client => {
+                    if (client && client.nom) {
+                        document.getElementById('nom').value = client.nom || '';
+                        document.getElementById('prenom').value = client.prenom || '';
+                        document.getElementById('telephone').value = client.telephone || '';
+                    } else {
+                        document.getElementById('nom').value = '';
+                        document.getElementById('prenom').value = '';
+                        document.getElementById('telephone').value = '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    document.getElementById('nom').value = '';
+                    document.getElementById('prenom').value = '';
+                    document.getElementById('telephone').value = '';
+                });
+        }
+
         function importerExcel() {
             const fichier = document.getElementById('fichier-excel').files[0];
             const messageDiv = document.getElementById('message-import');
@@ -26,9 +57,10 @@ window.addEventListener('load', function () {
             messageDiv.innerHTML = '<div class="alert alert-info"><span>Lecture du fichier en cours...</span></div>';
 
             fetch('${pageContext.request.contextPath}/collectes/lire-excel', {
-                method: 'POST',
-                body: formData
+                    method: 'POST',
+                    body: formData
             })
+
             .then(response => response.json())
             .then(data => {
                 if (data.erreur) {

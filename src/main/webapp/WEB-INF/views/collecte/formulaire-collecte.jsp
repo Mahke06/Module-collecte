@@ -43,6 +43,11 @@
 
                     <div class="client-box">
                         <div class="form-field">
+                            <label>Reference</label>
+                            <input type="text" id="reference" name="reference" required onblur="rechercherClient()">
+                        </div>
+
+                        <div class="form-field">
                             <label>Nom</label>
                             <input type="text" id="nom" name="nom" required>
                         </div>
@@ -94,6 +99,7 @@
         </div>
     </div>
 
+    <script>window.contextPath = '${pageContext.request.contextPath}';</script>
     <script src="${pageContext.request.contextPath}/assets/js/collecte.js"></script>
 
 </body>
