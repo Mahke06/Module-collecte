@@ -7,10 +7,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Facture collecte - VOLY VARY</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/variables.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte-2.css">
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/collecte-2.css">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
             <h1>Collecte : facture / detail lot de paddy</h1>
             <p>Verifiez les informations avant de valider le paiement</p>
         </div>
-        <a href="${pageContext.request.contextPath}/collectes/valides" class="btn btn-outline btn-sm">Retour a la liste</a>
+        <a href="/collectes/valides" class="btn btn-outline btn-sm">Retour a la liste</a>
     </div>
 
     <div class="section-card">
@@ -74,7 +74,7 @@
 
                 <c:if test="${lot.idLotPaddy == 0}">
                     <div class="flow-actions">
-                        <form action="${pageContext.request.contextPath}/collectes/enregistrer" method="post" style="display:inline;">
+                        <form action="/collectes/enregistrer" method="post" style="display:inline;">
                             <input type="hidden" name="dateHeure" value="${dateHeure}">
                             <input type="hidden" name="clientId" value="${client.idClient}">
                             <input type="hidden" name="quantite" value="${lot.quantite}">
@@ -89,15 +89,15 @@
                 <c:if test="${lot.idLotPaddy != 0}">
                     <c:if test="${statutActuel != 'VALIDE'}">
                         <div class="flow-actions">
-                            <form action="${pageContext.request.contextPath}/collectes/payer-lot" method="post" style="display:inline;">
+                            <form action="/collectes/payer-lot" method="post" style="display:inline;">
                                 <input type="hidden" name="idLot" value="${lot.idLotPaddy}">
                                 <button type="submit" class="btn btn-primary">Payer</button>
                             </form>
-                            <form action="${pageContext.request.contextPath}/collectes/annuler" method="post" style="display:inline;">
+                            <form action="/collectes/annuler" method="post" style="display:inline;">
                                 <input type="hidden" name="idLot" value="${lot.idLotPaddy}">
                                 <button type="submit" class="btn btn-outline" onclick="return confirm('Voulez-vous vraiment annuler cet achat ?')">Annuler l'achat</button>
                             </form>
-                            <a href="${pageContext.request.contextPath}/collectes/imprimer/${lot.idLotPaddy}" class="btn btn-outline">Imprimer la facture</a>
+                            <a href="/collectes/imprimer/${lot.idLotPaddy}" class="btn btn-outline">Imprimer la facture</a>
                         </div>
                     </c:if>
                     <c:if test="${statutActuel == 'VALIDE'}">
@@ -106,7 +106,7 @@
                             <span class="recap-value" style="color:green;font-weight:700;">Lot deja paye</span>
                         </div>
                         <div class="flow-actions">
-                            <a href="${pageContext.request.contextPath}/collectes/imprimer/${lot.idLotPaddy}" class="btn btn-outline">Imprimer la facture</a>
+                            <a href="/collectes/imprimer/${lot.idLotPaddy}" class="btn btn-outline">Imprimer la facture</a>
                         </div>
                     </c:if>
                 </c:if>
@@ -119,6 +119,6 @@
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/assets/js/sidebar.js"></script>
+<script src="/assets/js/sidebar.js"></script>
 </body>
 </html>

@@ -19,11 +19,11 @@
 		<div class="who"><strong><c:out value="${sidebarUserName}" /></strong><span><c:out value="${sidebarUserRole}" /></span></div>
 	</div>
 	<nav class="sidebar-nav">
-		<a href="${pageContext.request.contextPath}/dashboard" class="sidebar-link ${dashboardActive ? 'active' : ''}">
+		<a href="/dashboard" class="sidebar-link ${dashboardActive ? 'active' : ''}">
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
 			<span>Dashboard</span>
 		</a>
-		<a href="${pageContext.request.contextPath}/collectes/valides" class="sidebar-link ${collecteActive ? 'active' : ''}">
+		<a href="/collectes/valides" class="sidebar-link ${collecteActive ? 'active' : ''}">
 			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
 			<span>Collecte</span>
 		</a>

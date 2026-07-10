@@ -34,6 +34,7 @@ public class ClientService {
     //     int numero = Integer.parseInt(prefix);
     //     return String.format("C%03d", numero + 1);
     // }
+    
     public String obtenirDerniereReference() {
         List<Client> clients = clientRepository.trouverClientsParIdDesc();
         if (clients.isEmpty()) {

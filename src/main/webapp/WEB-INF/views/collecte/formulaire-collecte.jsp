@@ -6,10 +6,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouvelle collecte - VOLY VARY</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/variables.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/base.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/components.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/collecte-2.css">
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/base.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/collecte-2.css">
 </head>
 <body>
 
@@ -24,7 +24,7 @@
             <h1>Collecte : achat de paddy</h1>
             <p>Enregistrer un nouveau lot achete aupres d'un producteur</p>
         </div>
-        <a href="${pageContext.request.contextPath}/collectes/valides" class="btn btn-outline btn-sm">Retour a la liste</a>
+        <a href="/collectes/valides" class="btn btn-outline btn-sm">Retour a la liste</a>
     </div>
 
     <div class="section-card">
@@ -37,7 +37,7 @@
                     </div>
                 </c:if>
 
-                <form action="${pageContext.request.contextPath}/collectes/calculer" method="post" id="form-collecte">
+                <form action="/collectes/calculer" method="post" id="form-collecte">
                     <div class="form-grid">
                         <div class="form-field full">
                             <label>Date et heure</label>
@@ -99,15 +99,11 @@
         </div>
     </div>
 
-    <script>
-        const CONTEXT_PATH = '${pageContext.request.contextPath}';
-    </script>
-    <script src="${pageContext.request.contextPath}/assets/js/collecte.js"></script>
-
+    <script src="/assets/js/collecte.js"></script>
         </main>
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/assets/js/sidebar.js"></script>
+<script src="/assets/js/sidebar.js"></script>
 </body>
 </html>
