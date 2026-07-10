@@ -15,8 +15,7 @@ function importerExcel() {
     formData.append('fichier', fichier);
     messageDiv.innerHTML = '<div class="alert alert-info"><span>Lecture du fichier en cours...</span></div>';
 
-    // ✅ Utiliser CONTEXT_PATH au lieu de ${pageContext.request.contextPath}
-    fetch(CONTEXT_PATH + '/collectes/lire-excel', {
+    fetch('/collectes/lire-excel', {
         method: 'POST',
         body: formData
     })
@@ -49,7 +48,7 @@ function importerExcel() {
                 return;
             }
 
-            fetch(CONTEXT_PATH + '/collectes/chercher-client?reference=' + encodeURIComponent(reference))
+            fetch('/collectes/chercher-client?reference=' + encodeURIComponent(reference))
                 .then(response => response.json())
                 .then(client => {
                     if (client && client.nom) {
